@@ -70,7 +70,7 @@ public class GetAllWords {
         return result;
     }
 
-    public ArrayList<String> mainn() throws Exception{
+    public ArrayList<String> getWords() throws Exception{
         Scanner input = new Scanner(System.in);
         /**
         int length = input.nextInt();
