@@ -8,35 +8,89 @@ import java.awt.*;
 //still need to finish: boggle update, 2 player takes turn thing 
 
 public class BoggleGUI extends JFrame{
+	static int counter = 0; //count how rounds happened 
 	static boolean playerAI = true; 
 	static int goesFirst = 1; 
 	static boolean allowPause = true; 
 	static int goal = 15; 
+	static int score = 0; 
 	static String word = ""; 
 	static char[][] map=  {{'A', 'A', 'A', 'F', 'R', 'S'}, {'A', 'E', 'E', 'G', 'M', 'U'}, {'C', 'E', 'I', 'I', 'L', 'T'},{ 'D', 'H', 'H', 'N', 'O', 'T'}, {'F', 'I', 'P', 'R', 'S', 'Y'}}; 
 	static JLabel[][] showMap = new JLabel [map.length][map[0].length]; 
-	public static void main (String args[])
+	static boolean pause; 
+	static JFrame frame = new JFrame("boggle game"); 
+	
+	//MENU BAR
+	JMenuBar menuBar = new JMenuBar(); 
+	//menu 
+	JMenu menu = new JMenu("Menu");  // restart, shake up button, instruction, customisation
+	JMenu pauseMenu = new JMenu("Pause");  // pause, resume
+	//menu menu items 
+	JMenuItem instruction = new JMenuItem("Instruction"); 
+	JMenuItem restart = new JMenuItem("Home/ Restart"); 
+	JMenuItem shakeUp = new JMenuItem("Shake-up"); 
+	JMenuItem customisation = new JMenuItem("Customisation"); 
+	//pause menu item 
+	JMenuItem pauseOp = new JMenuItem( "Pause"); 
+	JMenuItem resume = new JMenuItem("Resume"); 
+	
+	
+	//Component for INSTRUCTION PANEL 
+	JPanel panInstruction = new JPanel();
+	JLabel instructionLabel0 = new JLabel("INSTRUCTION: ");
+	JLabel instructionLabel1 = new JLabel("Boggle overview");
+	JLabel instructionLabel2 = new JLabel("Boggle is a Hasbro word game that requires 16 letter cubes, "); 
+	JLabel instructionLabel3 = new JLabel("the cube grid with dome, and a 3-minute sand timer, "); 
+	JLabel instructionLabel4 = new JLabel("all of which should be included with your game. ");
+	JLabel instructionLabel5 = new JLabel("The game requires a minimum of two players with no maximum. "); 
+	JLabel instructionLabel6 = new JLabel("It is recommended for ages 8 and up.");
+	JLabel instructionLabel7 = new JLabel("The goal of the game is have the highest point total. "); 
+	JLabel instructionLabel8 = new JLabel("To gain points, players must create words from the randomly assorted letters in the cube grid. "); 
+	JLabel instructionLabel9 = new JLabel("The longer the word, the higher the point value of the word, according to Boggle rules.");
+	
+	//Component for HOME PAGE PANEL 
+	JPanel panStart = new JPanel(); 
+	JButton playBtn = new JButton("Play"); 
+	JLabel tips = new JLabel ("Remember to check the munu for more features and intruction. "); 
+	
+	//component for CUTOMISATION PANEL 
+	JPanel panCustomisation = new JPanel(new GridLayout(9, 2)); 
+	JLabel customisationLabel0 = new JLabel("CUSTOMISATION"); 
+	JLabel playersMode = new JLabel("Which mdoe would you like to choose? "); 
+	JButton singlePlayerBtn = new JButton("Single Player"); 
+	JButton twoPlayerBtn = new JButton("Two Player"); 
+	JLabel whoStartLabel = new JLabel("Who wants to start first? If you chose single player"); 
+	JButton player1Btn = new JButton("Player1"); 
+	JButton player2Btn = new JButton("Player2"); 
+	JLabel allowPauseLabel = new JLabel("Will this game allow pausing? "); 
+	JButton yesBtn = new JButton("Yes"); 
+	JButton noBtn = new JButton("No"); 
+	JTextField ptIn = new JTextField("Enter points to play"); 
+	JLabel targetScore = new JLabel("Tournament scroe? Please enter an integer. "); 
+	JButton ptBtn = new JButton("Enter"); 
+	
+	//components for PAUSE PANEL
+	JPanel panPause = new JPanel(); 
+	JLabel pauseLabel = new JLabel("Game paused"); 
+	JButton resumeBtn = new JButton("Resume"); 
+	
+	//components for PLAYING PANELS
+	JPanel panGuess = new JPanel(new FlowLayout()); 
+	JPanel panBoggle = new JPanel(new GridLayout(map.length, map[0].length)); 
+	JPanel panAIGuess = new JPanel(new FlowLayout()); 
+	JLabel guessLabel = new JLabel("What is your answer? "); 
+	JTextField guessIn = new JTextField("Please enter your answer here"); 
+	JButton guessBtn = new JButton("Enter"); 
+	JLabel computerLabel0 = new JLabel("The answer from computer is... "); 
+	JLabel computerLabel1 = new JLabel("still thinking... "); 
+	
+	public BoggleGUI()
 	{
-		
-		
 		//creating GUI components 
-		JFrame frame = new JFrame("boggle game"); 
 		frame.setSize(650, 550); 
 		
-		JPanel panInstruction = new JPanel();
+		//INSTRUCION PANEL 
 		panInstruction.setPreferredSize(new Dimension(650,550)); 
-		
-		//INSTRUCTION PANEL 
-		JLabel instructionLabel0 = new JLabel("INSTRUCTION: ");
-		JLabel instructionLabel1 = new JLabel("Boggle overview");
-		JLabel instructionLabel2 = new JLabel("Boggle is a Hasbro word game that requires 16 letter cubes, "); 
-		JLabel instructionLabel3 = new JLabel("the cube grid with dome, and a 3-minute sand timer, "); 
-		JLabel instructionLabel4 = new JLabel("all of which should be included with your game. ");
-		JLabel instructionLabel5 = new JLabel("The game requires a minimum of two players with no maximum. "); 
-		JLabel instructionLabel6 = new JLabel("It is recommended for ages 8 and up.");
-		JLabel instructionLabel7 = new JLabel("The goal of the game is have the highest point total. "); 
-		JLabel instructionLabel8 = new JLabel("To gain points, players must create words from the randomly assorted letters in the cube grid. "); 
-		JLabel instructionLabel9 = new JLabel("The longer the word, the higher the point value of the word, according to Boggle rules.");
 		
 		panInstruction.add(instructionLabel0); 
 		panInstruction.add(instructionLabel1); 
@@ -51,44 +105,24 @@ public class BoggleGUI extends JFrame{
 		panInstruction.setVisible(false);
 		
 		//PAUSE PANEL 
-		JPanel panPause = new JPanel(); 
-		JLabel pauseLabel = new JLabel("Game paused"); 
-		JButton resumeBtn = new JButton("Resume"); 
-		
 		pauseLabel.setFont(new Font("Bradley Hand", Font.BOLD, 40)); 
 		panPause.add(pauseLabel); 
 		panPause.add(resumeBtn);
 		panPause.setVisible(false);
 		
 		//PLAYING PANEL 
-		JPanel panGuess = new JPanel(new FlowLayout()); 
-		JPanel panBoggle = new JPanel(new GridLayout(map.length, map[0].length)); 
-		panBoggle.setVisible(false);
-		
-		JLabel guessLabel = new JLabel("What is your answer? "); 
-		JTextField guessIn = new JTextField("Please enter your answer here"); 
-		JButton guessBtn = new JButton("Enter"); 
 		panGuess.add(guessLabel); 
 		panGuess.add(guessIn); 
 		panGuess.add(guessBtn); 
+		panAIGuess.add(computerLabel0); 
+		panAIGuess.add(computerLabel1); 
+		
+		panBoggle.setVisible(false);
+		panGuess.setVisible(false);
+		panAIGuess.setVisible(false);
 		
 		//CUSTOMISATION PANEL 
-		JPanel panCustomisation = new JPanel(new GridLayout(9, 2)); 
 		panCustomisation.setPreferredSize(new Dimension(650, 550));
-		
-		JLabel customisationLabel0 = new JLabel("CUSTOMISATION"); 
-		JLabel playersMode = new JLabel("Which mdoe would you like to choose? "); 
-		JButton singlePlayerBtn = new JButton("Single Player"); 
-		JButton twoPlayerBtn = new JButton("Two Player"); 
-		JLabel whoStartLabel = new JLabel("Who wants to start first? If you chose single player"); 
-		JButton player1Btn = new JButton("Player1"); 
-		JButton player2Btn = new JButton("Player2"); 
-		JLabel allowPauseLabel = new JLabel("Will this game allow pausing? "); 
-		JButton yesBtn = new JButton("Yes"); 
-		JButton noBtn = new JButton("No"); 
-		JTextField ptIn = new JTextField("Enter points to play"); 
-		JLabel targetScore = new JLabel("Tournament scroe? Please enter an integer. "); 
-		JButton ptBtn = new JButton("Enter"); 
 		
 		panCustomisation.add(customisationLabel0); 
 		panCustomisation.add(new JLabel(""));
@@ -110,23 +144,10 @@ public class BoggleGUI extends JFrame{
 		panCustomisation.add(ptBtn); 
 		panCustomisation.setVisible(false); 
 		
-		//MENU BAR
-		JMenuBar menuBar = new JMenuBar(); 
-		//menu 
-		JMenu menu = new JMenu("Menu");  // restart, shake up button, instruction, customisation
-		JMenu pause = new JMenu("Pause");  // pause, resume
-		//menu menu items 
-		JMenuItem instruction = new JMenuItem("Instruction"); 
-		JMenuItem restart = new JMenuItem("Home/ Restart"); 
-		JMenuItem shakeUp = new JMenuItem("Shake-up"); 
-		JMenuItem customisation = new JMenuItem("Customisation"); 
-		//pause menu item 
-		JMenuItem pauseOp = new JMenuItem( "Pause"); 
-		JMenuItem resume = new JMenuItem("Resume"); 
 		
 		//MENU BAR 
 		menuBar.add(menu); 
-		menuBar.add(pause);
+		menuBar.add(pauseMenu);
 		frame.setJMenuBar(menuBar); 
 		//MENU - add menu items
 		menu.add(restart);
@@ -134,14 +155,9 @@ public class BoggleGUI extends JFrame{
 		menu.add(shakeUp); 
 		menu.add(customisation); 
 		
-		//HOME PAGE PANEL 
-		JPanel panStart = new JPanel(); 
-		JButton playBtn = new JButton("Play"); 
-		JLabel tips = new JLabel ("Remember to check the munu for more features and intruction. "); 
-		
 		//PAUSE -- add menu items 
-		pause.add(pauseOp); 
-		pause.add(resume); 
+		pauseMenu.add(pauseOp); 
+		pauseMenu.add(resume); 
 		
 		//START PANEL 
 		GridLayout gl1 = new GridLayout (2,1);
@@ -356,5 +372,31 @@ public class BoggleGUI extends JFrame{
 			}
 			
 		}
+	}
+	
+	public static void play ()
+	{
+		do 
+		{
+			//player 1
+			// check word is valid or not
+			// if it is valid, update the gui 
+			//path stored when checking valid or not 
+			
+			//player 2
+			if (playerAI)
+			{
+				frame.remove(panGuess); 
+				//word = the thing that AI generated 
+				//check if it is valid 
+				//if it is valid, update the gui 
+				//path stored when checking valid or not 
+			}
+			else 
+			{
+				//word = thing stored in guessIn 
+			}
+			counter ++;
+		}while (!pause || score != goal); 
 	}
 }
