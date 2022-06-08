@@ -48,7 +48,6 @@ public class BoggleGUI extends JFrame{
 		panInstruction.add(instructionLabel7); 
 		panInstruction.add(instructionLabel8); 
 		panInstruction.add(instructionLabel9); 
-		
 		panInstruction.setVisible(false);
 		
 		//PAUSE PANEL 
