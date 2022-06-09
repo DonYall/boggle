@@ -1,13 +1,15 @@
 package BoggleGame;
 
 import javax.swing.*;
-import java.awt.event.*; 
+import java.awt.event.*;
+import java.util.*;
 import java.awt.*; 
 
-//NOT FINISHED 
-//still need to finish: boggle update, 2 player takes turn thing 
+//ALMOST FINISHED 
+//still need to finish: boggle update (idk what should I update it to)
 
 public class BoggleGUI extends JFrame{
+	
 	static int counter = 0; //count how rounds happened 
 	static boolean playerAI = true; 
 	static int goesFirst = 1; 
@@ -20,7 +22,7 @@ public class BoggleGUI extends JFrame{
 	static boolean pause; 
 	static JFrame frame = new JFrame("boggle game"); 
 	
-	//MENU BAR
+	static //MENU BAR
 	JMenuBar menuBar = new JMenuBar(); 
 	//menu 
 	JMenu menu = new JMenu("Menu");  // restart, shake up button, instruction, customisation
@@ -28,7 +30,7 @@ public class BoggleGUI extends JFrame{
 	//menu menu items 
 	JMenuItem instruction = new JMenuItem("Instruction"); 
 	JMenuItem restart = new JMenuItem("Home/ Restart"); 
-	JMenuItem shakeUp = new JMenuItem("Shake-up"); 
+	static JMenuItem shakeUp = new JMenuItem("Shake-up"); 
 	JMenuItem customisation = new JMenuItem("Customisation"); 
 	//pause menu item 
 	JMenuItem pauseOp = new JMenuItem( "Pause"); 
@@ -75,9 +77,9 @@ public class BoggleGUI extends JFrame{
 	JButton resumeBtn = new JButton("Resume"); 
 	
 	//components for PLAYING PANELS
-	JPanel panGuess = new JPanel(new FlowLayout()); 
+	static JPanel panGuess = new JPanel(new FlowLayout()); 
 	JPanel panBoggle = new JPanel(new GridLayout(map.length, map[0].length)); 
-	JPanel panAIGuess = new JPanel(new FlowLayout()); 
+	static JPanel panAIGuess = new JPanel(new FlowLayout()); 
 	JLabel guessLabel = new JLabel("What is your answer? "); 
 	JTextField guessIn = new JTextField("Please enter your answer here"); 
 	JButton guessBtn = new JButton("Enter"); 
@@ -152,7 +154,7 @@ public class BoggleGUI extends JFrame{
 		//MENU - add menu items
 		menu.add(restart);
 		menu.add(instruction);  
-		menu.add(shakeUp); 
+		//menu.add(shakeUp); 
 		menu.add(customisation); 
 		
 		//PAUSE -- add menu items 
@@ -353,10 +355,7 @@ public class BoggleGUI extends JFrame{
 				frame.add(panBoggle); 
 				panBoggle.setVisible(true); 
 				
-				//everything start doing things (panBoggle)
-				//player1 always read user input --> a method that create text field, read user input, invoke checking method
-				//player2 if (boolean playerAI is true, invoke AI method that create AI guess)
-				//              else (method that player1 used -- >method take the number of player as parameter eg player"1" , player"2")
+				play(); 
 			}
 		}
 		playBtn.addActionListener(new playPressed()); 
@@ -376,17 +375,21 @@ public class BoggleGUI extends JFrame{
 	
 	public static void play ()
 	{
+		ArrayList<String> path = new ArrayList<String>(); 
 		do 
 		{
 			//player 1
 			// check word is valid or not
-			// if it is valid, update the gui 
+			// if it is valid, update the gui, return path 
 			//path stored when checking valid or not 
 			
 			//player 2
 			if (playerAI)
 			{
 				frame.remove(panGuess); 
+				frame.add(panAIGuess); 
+				
+				
 				//word = the thing that AI generated 
 				//check if it is valid 
 				//if it is valid, update the gui 
@@ -394,9 +397,30 @@ public class BoggleGUI extends JFrame{
 			}
 			else 
 			{
-				//word = thing stored in guessIn 
+				// check word is valid or not
+				// if it is valid, update the gui, return path 
+				//path stored when checking valid or not 
+							
 			}
-			counter ++;
+			counter ++; 
+			if (counter >2)
+			{
+				menuBar.add(shakeUp); 
+			}
 		}while (!pause || score != goal); 
+	}
+	
+	public static void updateGUI (ArrayList<String> path)
+	{
+		for (int i =0; i<path.size(); i++) //for loop 
+		{
+			String rowCol = path.get(i); //get x y coordinate 
+			int row = Integer.parseInt(""+rowCol.charAt(0)); //get y coordinate 
+			int col = Integer.parseInt(""+rowCol.charAt(1)); //get x coordinate 
+			
+			//A method that can change the GUI, but idk what do we want 
+			//changeCellType(maze, row, col); //invoke sub method 
+			//changeColor(maze[row][col].getText(), row, col); //invoke sub method 
+		}
 	}
 }
