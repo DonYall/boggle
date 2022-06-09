@@ -28,7 +28,7 @@ public class CheckWordsInBoard {
 
     // A recursive function to generate all possible words in a boggle
     public static void searchBoggle(char[][] board, String words, ArrayList<String> arrWords,
-                                    Set<String> result, boolean[][] processed,
+                                    ArrayList<String> result, boolean[][] processed,
                                     int i, int j, String path) {
         // Mark the current node as processed
         processed[i][j] = true;
@@ -51,8 +51,8 @@ public class CheckWordsInBoard {
     }
 
     // Find one word in the Boggle Matrix
-    public static Set<String> searchBoggle(char[][] board, String words, ArrayList<String> arrWords ) {
-        Set<String> result = new HashSet<>();
+    public static ArrayList<String> searchBoggle(char[][] board, String words, ArrayList<String> arrWords ) {
+        ArrayList<String> result = new ArrayList<>();
 
         if (board.length == 0) {
             return result;
@@ -107,7 +107,7 @@ public class CheckWordsInBoard {
                     for(int l = 0; l < words.length(); l++) {
                         arrWords.add(Character.toString(words.charAt(l))) ;
                     }
-                    Set<String> validWords = searchBoggle(board, words, arrWords);
+                    ArrayList<String> validWords = searchBoggle(board, words, arrWords);
 
                     if(!validWords.isEmpty()) {
                         dicWords.add(validWords.toString());
@@ -115,8 +115,9 @@ public class CheckWordsInBoard {
                 }
             }
         }
-        for(int i = 0; i < dicWords.size(); i++){
-            System.out.println(dicWords.get(i));
+        // Not mandatory you could just return the arraylist instead
+        for(String s : dicWords){
+            System.out.println(s);
         }
     }
 
@@ -125,22 +126,24 @@ public class CheckWordsInBoard {
         // Still can't find a way to read from file without the future methods taking
         // 10 years to complete :/
         char [][] board = {
-                {'W', 'S', 'J', 'T', 'R', 'T'},
-                {'U', 'L', 'M', 'O', 'E', 'P'},
-                {'C', 'F', 'X', 'K', 'Y', 'H'},
-                {'T', 'A', 'N', 'D', 'L', 'M'},
-                {'B', 'H', 'B', 'J', 'E', 'E'},
+                {'W', 'S', 'J', 'T', 'R'},
+                {'U', 'L', 'M', 'O', 'E'},
+                {'C', 'F', 'X', 'K', 'Y'},
+                {'T', 'A', 'N', 'D', 'L'},
+                {'B', 'H', 'B', 'J', 'E'},
         };
 
-        String words = input.nextLine();
+        String word = input.nextLine();
         ArrayList<String> arrWords = new ArrayList<>();
 
-        for(int i = 0; i < words.length(); i++) {
-            arrWords.add(Character.toString(words.charAt(i))) ;
+        for(int i = 0; i < word.length(); i++) {
+            arrWords.add(Character.toString(word.charAt(i))) ;
         }
 
-        Set<String> validWords = searchBoggle(board, words, arrWords);
-        System.out.println(validWords);
+        ArrayList<String> validWords = searchBoggle(board, word, arrWords);
+        for(String s : validWords){
+            System.out.println(s);
+        }
         findAllWords(board);
     }
 }
