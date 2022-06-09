@@ -418,8 +418,7 @@ public class BoggleGUI extends JFrame{
 			int row = Integer.parseInt(""+rowCol.charAt(0)); //get y coordinate 
 			int col = Integer.parseInt(""+rowCol.charAt(1)); //get x coordinate 
 			
-			//A method that can change the GUI, but idk what do we want 
-			//changeCellType(maze, row, col); //invoke sub method 
+			//A method that can change the GUI, but idk what do we want (eg I am going to invoke a method tho)
 			//changeColor(maze[row][col].getText(), row, col); //invoke sub method 
 		}
 	}
