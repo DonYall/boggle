@@ -1,4 +1,4 @@
-package ok;
+package _project;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -74,7 +74,7 @@ public class GetAllWords {
         try {
             Scanner inputDic = new Scanner(fileDictionary);
             while(inputDic.hasNext()){
-                String strNext = inputDic.next().toUpperCase();
+                String strNext = inputDic.next();
                 if(strNext.length() > 2) {
                     // arrDic.add(strNext);
                     String strFirstLetter = strNext.substring(0, 1);
@@ -115,29 +115,10 @@ public class GetAllWords {
                 }
             }
         }
-        
         return(dicWords);
     }
 
-    public ArrayList<String> getWords() {
-        Scanner input = new Scanner(System.in);
-        // Still can't find a way to read from file without the future methods taking
-        // 10 years to complete :/
-        char [][] board = {
-                {'W', 'S', 'J', 'T', 'R'},
-                {'U', 'L', 'M', 'O', 'E'},
-                {'C', 'F', 'X', 'K', 'Y'},
-                {'T', 'A', 'N', 'D', 'L'},
-                {'B', 'H', 'B', 'J', 'E'},
-        };
-
-        String word = input.nextLine();
-        ArrayList<String> arrWords = new ArrayList<>();
-
-        for(int i = 0; i < word.length(); i++) {
-            arrWords.add(Character.toString(word.charAt(i))) ;
-        }
-
-        return findAllWords(board);
+    public ArrayList<String> getWords (char[][] board) {
+       return(findAllWords(board));
     }
 }
