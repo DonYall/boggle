@@ -462,24 +462,14 @@ public class BoggleGUI2 extends JFrame{
 				if (showFinal)
 				{
 					System.out.println(" colorToOrange invoked"); 
-					colorToOrange(row,  col); 
+					showMap[row][col].setBackground(Color.ORANGE); 
 				}
 				else 
 				{
 					System.out.println(" colorToWhite invoked"); 
-					colorToWhite(row, col); 
+					showMap[row][col].setBackground(Color.WHITE); 
 				}
 			}
 		}
-	}
-	
-	public static void colorToOrange(int row, int col)
-	{
-		showMap[row][col].setBackground(Color.ORANGE); 
-	}
-	
-	public static void colorToWhite(int row, int col)
-	{
-		showMap[row][col].setBackground(Color.WHITE); 
 	}
 }
