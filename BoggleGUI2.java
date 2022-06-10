@@ -355,11 +355,6 @@ public class BoggleGUI2 extends JFrame{
 				
 				frame.add(panBoggle); 
 				panBoggle.setVisible(true); 
-				
-				//everything start doing things (panBoggle)
-				//player1 always read user input --> a method that create text field, read user input, invoke checking method
-				//player2 if (boolean playerAI is true, invoke AI method that create AI guess)
-				//              else (method that player1 used -- >method take the number of player as parameter eg player"1" , player"2")
 			}
 		}
 		playBtn.addActionListener(new playPressed()); 
@@ -367,32 +362,14 @@ public class BoggleGUI2 extends JFrame{
 		class guessBtnPressed extends JFrame implements ActionListener
 		{
 			public void actionPerformed(ActionEvent e) {
-				/*
-				 * do { if (player1) { //player 1 // check word is valid or not // if it is
-				 * valid, update the gui, return path //path stored when checking valid or not
-				 * changeColor(true); } else { //player 2 if (playerAI) {
-				 * frame.remove(panGuess); frame.add(panAIGuess);
-				 * 
-				 * 
-				 * //word = the thing that AI generated //check if it is valid //if it is valid,
-				 * update the gui //path stored when checking valid or not } else { // check
-				 * word is valid or not // if it is valid, update the gui, return path //path
-				 * stored when checking valid or not
-				 * 
-				 * } changeColor(true); }
-				 * 
-				 * if (counter <3) { counter ++; } else if (counter ==3) { menuBar.add(shakeUp);
-				 * }
-				 * 
-				 * }while (!(pause || score != goal));
-				 */
+				String guess = guessIn.getText(); 
 				
 				switch(player%2)
 				{
 				case 1: 
 					//player 1 
 					// check word is valid or not 
-					// if it is* valid, update the gui, return path 
+					// if it is valid, update the gui, return path 
 					//path stored when checking valid or not
 					
 					changeColor(true); 
@@ -434,7 +411,6 @@ public class BoggleGUI2 extends JFrame{
 				System.out.println("panStart: " + panStart.isShowing()); 
 				
 				
-				String guess = guessIn.getText(); 
 				for (int i =0; i<guess.length(); i++)
 				{
 					word = word + guess.substring(i).toUpperCase(); 
