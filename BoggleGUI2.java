@@ -6,7 +6,7 @@ import java.awt.*;
 //NOT FINISHED 
 //still need to finish: boggle update, 2 player takes turn thing 
 public class BoggleGUI2 extends JFrame{
-	static boolean playerAI = true; 
+	static boolean playerAI = false; 
 	static int goesFirst = 1; 
 	static boolean allowPause = true; 
 	static boolean pause = true; 
@@ -17,9 +17,15 @@ public class BoggleGUI2 extends JFrame{
 	//static char[][]= Dice.getDice(); 
 	static JLabel[][] showMap = new JLabel [map.length][map[0].length]; 
 	static int counter = 0; 
+	static ArrayList<String> path = new ArrayList<String>(); 
+	static boolean player1; 
+	static int player = 1; 
+	
 	public static void main (String args[])
 	{
-		
+		//TESTING 
+		path.add("12");
+		path.add("13"); 
 		
 		//creating GUI components 
 		JFrame frame = new JFrame("boggle game"); 
@@ -63,7 +69,7 @@ public class BoggleGUI2 extends JFrame{
 		panPause.add(resumeBtn);
 		panPause.setVisible(false);
 		
-		//components for PLAYING PANELS
+		//PLAYING PANELS
 		JPanel panGuess = new JPanel(new FlowLayout()); 
 		JPanel panBoggle = new JPanel(new GridLayout(map.length, map[0].length)); 
 		JPanel panAIGuess = new JPanel(new FlowLayout()); 
@@ -232,6 +238,8 @@ public class BoggleGUI2 extends JFrame{
 				frame.repaint(); 
 				frame.revalidate(); 
 				
+				changeColor(false); 
+				
 				frame.add(panInstruction); 
 				panInstruction.setVisible(true);
 				validate(); 
@@ -262,6 +270,7 @@ public class BoggleGUI2 extends JFrame{
 		{
 			public void actionPerformed (ActionEvent e)
 			{
+				changeColor(false); 
 				//randomise the dice 
 			}
 		}
@@ -338,10 +347,9 @@ public class BoggleGUI2 extends JFrame{
 					for (int j=0; j<map[i].length; j++)
 					{
 						showMap[i][j] = new JLabel(Character.toString(map[i][j])); 
-						//System.out.println(Character.toString(map[i][j])); 
 						panBoggle.add(showMap[i][j]); 
-						//System.out.println(showMap[i][j].getText()); 
 						showMap[i][j].setOpaque(true);
+						showMap[i][j].setBackground(Color.WHITE); 
 					}
 				}
 				
@@ -356,68 +364,116 @@ public class BoggleGUI2 extends JFrame{
 		}
 		playBtn.addActionListener(new playPressed()); 
 		
-		class guessBtn extends JFrame implements ActionListener
+		class guessBtnPressed extends JFrame implements ActionListener
 		{
 			public void actionPerformed(ActionEvent e) {
-				ArrayList<String> path = new ArrayList<String>(); 
-				do 
-				{
-					//player 1
-					// check word is valid or not
-					// if it is valid, update the gui, return path 
-					//path stored when checking valid or not 
-					
-					//player 2
-					if (playerAI)
-					{
-						frame.remove(panGuess); 
-						frame.add(panAIGuess); 
-						
-						
-						//word = the thing that AI generated 
-						//check if it is valid 
-						//if it is valid, update the gui 
-						//path stored when checking valid or not 
-					}
-					else 
-					{
-						// check word is valid or not
-						// if it is valid, update the gui, return path 
-						//path stored when checking valid or not 
-									
-					}
-					counter ++; 
-					if (counter >2)
-					{
-						menuBar.add(shakeUp); 
-					}
-				}while (!(pause || score != goal)); 
-			
+				/*
+				 * do { if (player1) { //player 1 // check word is valid or not // if it is
+				 * valid, update the gui, return path //path stored when checking valid or not
+				 * changeColor(true); } else { //player 2 if (playerAI) {
+				 * frame.remove(panGuess); frame.add(panAIGuess);
+				 * 
+				 * 
+				 * //word = the thing that AI generated //check if it is valid //if it is valid,
+				 * update the gui //path stored when checking valid or not } else { // check
+				 * word is valid or not // if it is valid, update the gui, return path //path
+				 * stored when checking valid or not
+				 * 
+				 * } changeColor(true); }
+				 * 
+				 * if (counter <3) { counter ++; } else if (counter ==3) { menuBar.add(shakeUp);
+				 * }
+				 * 
+				 * }while (!(pause || score != goal));
+				 */
 				
 				String guess = guessIn.getText(); 
 				for (int i =0; i<guess.length(); i++)
 				{
 					word = word + guess.substring(i).toUpperCase(); 
 				}
+				
+				switch(player%2)
+				{
+				case 1: 
+					changeColor(true); 
+					
+					if (playerAI)
+					{
+						frame.remove(panGuess); 
+						frame.add(panAIGuess); 
+						panAIGuess.setVisible(true); 
+						
+						//word = the thing that AI generated 
+						//check if it is valid 
+						//if it is valid, update the gui 
+						//path stored when checking valid or not 
+					}
+					break; 
+					
+				case 2: 
+					//player 2
+					if (!playerAI) 
+					{
+						// check word is valid or not
+						// if it is valid, update the gui, return path 
+						//path stored when checking valid or not 
+									
+					}
+					changeColor(true); 
+					counter ++; 
+					break; 
+				}
+				
+				//WHERE THE FUCK IS BUG 
+				System.out.println("panInstruction: " + panInstruction.isShowing()); 
+				System.out.println("panPause: " + panPause.isShowing()); 
+				System.out.println("panGuess: " + panGuess.isShowing()); 
+				System.out.println("panBoggle: " + panBoggle.isShowing()); 
+				System.out.println("panAIGuess: " + panAIGuess.isShowing()); 
+				System.out.println("panCustomisation: " + panCustomisation.isShowing()); 
+				System.out.println("panStart: " + panStart.isShowing()); 
 			}
 		}
-		
+		guessBtn.addActionListener(new guessBtnPressed()); 
 			
 	}
 	
 	
 	
-	public static void updateGUI (ArrayList<String> path)
+	public static void changeColor (boolean showFinal)
 	{
-		for (int i =0; i<path.size(); i++) //for loop 
+		System.out.print("Change color invoked");
+		
+		if (path.size() !=0)
 		{
-			String rowCol = path.get(i); //get x y coordinate 
-			int row = Integer.parseInt(""+rowCol.charAt(0)); //get y coordinate 
-			int col = Integer.parseInt(""+rowCol.charAt(1)); //get x coordinate 
-			
-			//A method that can change the GUI, but idk what do we want 
-			//changeCellType(maze, row, col); //invoke sub method 
-			//changeColor(maze[row][col].getText(), row, col); //invoke sub method 
+			for (int i =0; i<path.size(); i++) //for loop 
+			{
+				String rowCol = path.get(i); //get x y coordinate 
+				int row = Integer.parseInt(""+rowCol.charAt(0)); //get y coordinate 
+				int col = Integer.parseInt(""+rowCol.charAt(1)); //get x coordinate 
+				
+				if (showFinal)
+				{
+					System.out.println(" colorToOrange invoked"); 
+					colorToOrange(row,  col); 
+				}
+				else 
+				{
+					System.out.println(" colorToWhite invoked"); 
+					colorToWhite(row, col); 
+				}
+			}
 		}
+	}
+	
+	public static void colorToOrange(int row, int col)
+	{
+		showMap[row][col].setBackground(Color.ORANGE); 
+	}
+	
+	public static void colorToWhite(int row, int col)
+	{
+		showMap[row][col].setBackground(Color.WHITE); 
 	}
 }
