@@ -1,103 +1,92 @@
-package _project;
+package ok;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class GetAllWords {
-    // Eight possible movements from a cell
-    // (top, right, bottom, left, and four diagonal moves)
-    int[] row = {-1, -1, -1, 0, 1, 0, 1, 1};
-    int[] col = {-1, 1, 0, -1, -1, 1, 0, 1};
-    ArrayList<String> validStuff = new ArrayList<String>();
-    
-    // Function to check if it is possible to go to cell (x, y) from the current cell.
-    // The function returns false if (x, y) is not a valid matrix point
-    // or if cell (x, y) has already been processed.
-    public boolean isSafe(int x, int y, boolean[][] processed) {
-        return (x >= 0 && x < processed.length) && (y >= 0 && y < processed[0].length) && !processed[x][y];
+    public int[] row = { -1, -1, -1, 0, 1, 0, 1, 1 };
+    public int[] col = { -1, 1, 0, -1, -1, 1, 0, 1 };
+    public int intStartR = 0;
+    public int intStartC = 0;
+    public boolean isSafe(int x, int y, boolean[][] processed, char[][] board, ArrayList<String> words) {
+        //return (x >= 0 && x < processed.length) && (y >= 0 && y < processed[0].length) && !processed[x][y] ;
+        boolean isSafe = false;
+        if((x >= 0 && x < processed.length) && (y >= 0 && y < processed[0].length) && !processed[x][y]) {
+            if(words.indexOf(Character.toString(board[x][y])) < 0){
+                isSafe = false;
+            }
+            else {
+                isSafe = true;
+            }
+        }
+        return isSafe;
     }
 
-    // A recursive function to generate all possible words in a boggle set
-    public void searchBoggle(char[][] board, Set<String> words, Set<String> result,
-                                    boolean[][] processed, int i, int j, String path) {
+    // A recursive function to generate all possible words in a boggle
+    public void searchBoggle(char[][] board, String words, ArrayList<String> arrWords,
+                                    ArrayList<String> result, boolean[][] processed,
+                                    int i, int j, String path) {
         // Mark the current node as processed
         processed[i][j] = true;
-
         // Update the path with the current character and insert it into the set
         path += board[i][j];
 
         // Check whether the path is present in the input set
-        if (words.contains(path)) {
+        if (words.equals(path)) {
             result.add(path);
+            return;
         }
-
         // Check for all eight possible movements from the current cell
         for (int k = 0; k < row.length; k++) {
-            // Skip if a cell is invalid, or it is already processed
-            if (isSafe(i + row[k], j + col[k], processed)) {
-                searchBoggle(board, words, result, processed, i + row[k], j + col[k], path);
+            if (isSafe(i + row[k], j + col[k], processed, board, arrWords)) {
+                searchBoggle(board, words,arrWords, result, processed, i + row[k], j + col[k], path);
             }
         }
-
-        // Backtrack: Mark the current node as unprocessed
+        // Mark the current node as unprocessed
         processed[i][j] = false;
     }
 
-    // Function to search for a given set of words in a boggle
-    public Set<String> searchBoggle(char[][] board, Set<String> words) {
-        // Construct a set to store valid words constructed from the boggle
-        Set<String> result = new HashSet<>();
+    // Find one word in the Boggle Matrix
+    public ArrayList<String> searchBoggle(char[][] board, String words, ArrayList<String> arrWords ) {
+        ArrayList<String> result = new ArrayList<>();
 
-        // Base case
         if (board.length == 0) {
             return result;
         }
-
-        // `MN` board
         int M = board.length;
         int N = board[0].length;
-
-        // Construct a boolean matrix to store whether a cell is processed or not
         boolean[][] processed = new boolean[M][N];
 
-        // Generate all possible words in a boggle
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++) {
-                // Consider each character as a starting point and run DFS
-                searchBoggle(board, words, result, processed, i, j, "");
-            }
-        }
+        searchBoggle(board, words, arrWords, result, processed, intStartR, intStartC, "");
         return result;
     }
 
-    public ArrayList<String> getWords() throws Exception{
-        Scanner input = new Scanner(System.in);
-        /**
-        int length = input.nextInt();
-        int width = input.nextInt();
-        char [][] arrBoard = new char[length][width];
-        File fileBoard = new File("board.txt");
-        Scanner inputBrd = new Scanner(fileBoard);
+    public ArrayList<String> findAllWords(char [][] board) {
+        Map<String, ArrayList<String>> mapDic = new HashMap<String, ArrayList<String>>();
+        ArrayList<String> dicWords = new ArrayList<String>();
 
-        for(int i = 0; i < length; i++){
-            for(int j = 0; j < width; j++){
-                arrBoard[i][j] = inputBrd.next().charAt(0);
-            }
-        }
-        **/
-
-        char[][] board = {{'M', 'S', 'E'}, 
-        				  {'R', 'A', 'T'}, 
-        				  {'L', 'O', 'N'}};
-
-        Set<String> sWords = new HashSet<String>();
-
+        //Put dictionary into Map
         File fileDictionary = new File("dictionary.txt");
         try {
-            // Putting all the words in the dictionary into a set
             Scanner inputDic = new Scanner(fileDictionary);
-            while (inputDic.hasNext()) {
-                sWords.add(inputDic.next().toUpperCase());
+            while(inputDic.hasNext()){
+                String strNext = inputDic.next().toUpperCase();
+                if(strNext.length() > 2) {
+                    // arrDic.add(strNext);
+                    String strFirstLetter = strNext.substring(0, 1);
+                    if(mapDic.get(strFirstLetter) != null) {
+                        mapDic.get(strFirstLetter).add(strNext);
+                    }
+                    else {
+                        ArrayList<String> arrTemp = new ArrayList<String>();
+                        arrTemp.add(strNext);
+                        mapDic.put(strFirstLetter, arrTemp);
+                    }
+                }
             }
             inputDic.close();
         }
@@ -105,16 +94,50 @@ public class GetAllWords {
             e.printStackTrace();
         }
 
-        //System.out.println(sWords.size() + " possible combinations\n");
-        // Searching the boggle for words in the set
-        Set<String> validWords = searchBoggle(board, sWords);;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                intStartR = i;
+                intStartC = j;
+                ArrayList<String> arrWordList = mapDic.get(Character.toString(board[i][j]));
 
-        // Printing out all the possible words in the boggle based on something
-        for(String s : validWords){
-            if(s.length() >= 3){
-                validStuff.add(s);
+                for (int k = 0; k < arrWordList.size(); k++) {
+                    String words = arrWordList.get(k);
+                    ArrayList<String> arrWords = new ArrayList<String>();
+
+                    for(int l = 0; l < words.length(); l++) {
+                        arrWords.add(Character.toString(words.charAt(l))) ;
+                    }
+                    ArrayList<String> validWords = searchBoggle(board, words, arrWords);
+
+                    if(!validWords.isEmpty()) {
+                        dicWords.add(validWords.toString());
+                    }
+                }
             }
         }
-        return(validStuff);
+        
+        return(dicWords);
+    }
+
+    public ArrayList<String> getWords() {
+        Scanner input = new Scanner(System.in);
+        // Still can't find a way to read from file without the future methods taking
+        // 10 years to complete :/
+        char [][] board = {
+                {'W', 'S', 'J', 'T', 'R'},
+                {'U', 'L', 'M', 'O', 'E'},
+                {'C', 'F', 'X', 'K', 'Y'},
+                {'T', 'A', 'N', 'D', 'L'},
+                {'B', 'H', 'B', 'J', 'E'},
+        };
+
+        String word = input.nextLine();
+        ArrayList<String> arrWords = new ArrayList<>();
+
+        for(int i = 0; i < word.length(); i++) {
+            arrWords.add(Character.toString(word.charAt(i))) ;
+        }
+
+        return findAllWords(board);
     }
 }
