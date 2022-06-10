@@ -8,7 +8,7 @@ public class BoggleSinglePlayerBot {
         GetAllWords gaw = new GetAllWords();
 		ArrayList<String> words = gaw.getWords();
 		
-		int wordsToGuess = (int)(Math.sqrt(difficulty)*5);
+		int wordsToGuess = difficulty+2;
 		for (int i = 0; i < wordsToGuess; i++) {
 			int r = (int)(Math.random() * (words.size()-1));
 			System.out.println(words.get(r));
