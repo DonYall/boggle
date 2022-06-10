@@ -4,9 +4,9 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.awt.*; 
 //NOT FINISHED 
-//still need to finish: boggle update, 2 player takes turn thing 
+//still need to finish: connect with other part  
 public class BoggleGUI2 extends JFrame{
-	static boolean playerAI = false; 
+	static boolean playerAI = true; 
 	static int goesFirst = 1; 
 	static boolean allowPause = true; 
 	static boolean pause = true; 
@@ -387,15 +387,14 @@ public class BoggleGUI2 extends JFrame{
 				 * }while (!(pause || score != goal));
 				 */
 				
-				String guess = guessIn.getText(); 
-				for (int i =0; i<guess.length(); i++)
-				{
-					word = word + guess.substring(i).toUpperCase(); 
-				}
-				
 				switch(player%2)
 				{
 				case 1: 
+					//player 1 
+					// check word is valid or not 
+					// if it is* valid, update the gui, return path 
+					//path stored when checking valid or not
+					
 					changeColor(true); 
 					
 					if (playerAI)
@@ -433,6 +432,13 @@ public class BoggleGUI2 extends JFrame{
 				System.out.println("panAIGuess: " + panAIGuess.isShowing()); 
 				System.out.println("panCustomisation: " + panCustomisation.isShowing()); 
 				System.out.println("panStart: " + panStart.isShowing()); 
+				
+				
+				String guess = guessIn.getText(); 
+				for (int i =0; i<guess.length(); i++)
+				{
+					word = word + guess.substring(i).toUpperCase(); 
+				}
 			}
 		}
 		guessBtn.addActionListener(new guessBtnPressed()); 
