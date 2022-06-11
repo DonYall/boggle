@@ -64,7 +64,6 @@ public class CheckWordsInBoard {
         return result;
     }*/
     
-    // Find one word in the Boggle Matrix
     public static ArrayList<String> searchBoggle(char[][] board, String word, ArrayList<String> arrWords) {
         ArrayList<String> result = new ArrayList<>();
 
