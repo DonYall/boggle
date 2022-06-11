@@ -13,7 +13,7 @@ public class CheckWordsInBoard {
     public static int intStartR = 0;
     public static int intStartC = 0;
     public static boolean isSafe(int x, int y, boolean[][] processed, char[][] board, ArrayList<String> words) {
-        //return (x >= 0 && x < processed.length) && (y >= 0 && y < processed[0].length) && !processed[x][y] ;
+        // return (x >= 0 && x < processed.length) && (y >= 0 && y < processed[0].length) && !processed[x][y] ;
         boolean isSafe = false;
         if((x >= 0 && x < processed.length) && (y >= 0 && y < processed[0].length) && !processed[x][y]) {
             if(words.indexOf(Character.toString(board[x][y])) < 0){
@@ -26,8 +26,8 @@ public class CheckWordsInBoard {
         return isSafe;
     }
 
-    // A recursive function to generate all possible words in a boggle
-    public static void searchBoggle(char[][] board, String words, ArrayList<String> arrWords,
+    // A recursive function to generate and print all possible words in a boggle
+    public static void searchBoggle(char[][] board, String word, ArrayList<String> arrWords,
                                     ArrayList<String> result, boolean[][] processed,
                                     int i, int j, String path) {
         // Mark the current node as processed
@@ -36,14 +36,14 @@ public class CheckWordsInBoard {
         path += board[i][j];
 
         // Check whether the path is present in the input set
-        if (words.equals(path)) {
+        if (word.equals(path)) {
             result.add(path);
             return;
         }
         // Check for all eight possible movements from the current cell
         for (int k = 0; k < row.length; k++) {
             if (isSafe(i + row[k], j + col[k], processed, board, arrWords)) {
-                searchBoggle(board, words,arrWords, result, processed, i + row[k], j + col[k], path);
+                searchBoggle(board, word, arrWords, result, processed, i + row[k], j + col[k], path);
             }
         }
         // Mark the current node as unprocessed
@@ -51,17 +51,42 @@ public class CheckWordsInBoard {
     }
 
     // Find one word in the Boggle Matrix
-    public static ArrayList<String> searchBoggle(char[][] board, String words, ArrayList<String> arrWords ) {
+    /*public static ArrayList<String> searchBoggle(char[][] board, String word, ArrayList<String> arrWords) {
         ArrayList<String> result = new ArrayList<>();
 
         if (board.length == 0) {
             return result;
         }
-        int M = board.length;
-        int N = board[0].length;
-        boolean[][] processed = new boolean[M][N];
 
-        searchBoggle(board, words, arrWords, result, processed, intStartR, intStartC, "");
+        boolean[][] processed = new boolean[board.length][board[0].length];
+
+        searchBoggle(board, word, arrWords, result, processed, intStartR, intStartC, "");
+        return result;
+    }*/
+    
+    // Find one word in the Boggle Matrix
+    public static ArrayList<String> searchBoggle(char[][] board, String word, ArrayList<String> arrWords) {
+        ArrayList<String> result = new ArrayList<>();
+
+        if (board.length == 0) {
+            return result;
+        }
+
+        boolean[][] processed = new boolean[board.length][board[0].length];
+
+        for(int i= 0; i < board.length ; i++ ) {
+            for (int j = 0; j <board[0].length ; j++) {
+                if(board[i][j] == word.charAt(0)) {
+                    intStartR = i ;
+                    intStartC = j;
+                    searchBoggle(board, word, arrWords, result, processed, intStartR, intStartC, "");
+                    if(result.size() > 0) {
+                        return result;
+                    }
+                }
+            }
+        }
+
         return result;
     }
 
@@ -140,10 +165,8 @@ public class CheckWordsInBoard {
             arrWords.add(Character.toString(word.charAt(i))) ;
         }
 
-        ArrayList<String> validWords = searchBoggle(board, word, arrWords);
-        for(String s : validWords){
-            System.out.println(s);
-        }
-        findAllWords(board);
+        ArrayList<String> validWords = searchBoggle(board, word.toUpperCase(), arrWords);
+        System.out.println(validWords);
+        // findAllWords(board);
     }
 }
