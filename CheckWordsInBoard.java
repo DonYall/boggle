@@ -63,7 +63,7 @@ public class CheckWordsInBoard {
         searchBoggle(board, word, arrWords, result, processed, intStartR, intStartC, "");
         return result;
     }*/
-    
+
     public static ArrayList<String> searchBoggle(char[][] board, String word, ArrayList<String> arrWords) {
         ArrayList<String> result = new ArrayList<>();
 
@@ -73,7 +73,7 @@ public class CheckWordsInBoard {
 
         boolean[][] processed = new boolean[board.length][board[0].length];
 
-        for(int i= 0; i < board.length ; i++ ) {
+        for(int i = 0; i < board.length ; i++ ) {
             for (int j = 0; j <board[0].length ; j++) {
                 if(board[i][j] == word.charAt(0)) {
                     intStartR = i ;
@@ -85,7 +85,6 @@ public class CheckWordsInBoard {
                 }
             }
         }
-
         return result;
     }
 
@@ -145,18 +144,31 @@ public class CheckWordsInBoard {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         Scanner input = new Scanner(System.in);
         // Still can't find a way to read from file without the future methods taking
         // 10 years to complete :/
-        char [][] board = {
+        // Fixing it rn
+        /*char [][] board = {
                 {'W', 'S', 'J', 'T', 'R'},
                 {'U', 'L', 'M', 'O', 'E'},
                 {'C', 'F', 'X', 'K', 'Y'},
                 {'T', 'A', 'N', 'D', 'L'},
                 {'B', 'H', 'B', 'J', 'E'},
-        };
+        };*/
+        int length = input.nextInt();
+        int width = input.nextInt();
+        char [][] board = new char[length][width]; // You can replace this with other char arrays
+        File fileBoard = new File("board.txt");
+        Scanner inputBrd = new Scanner(fileBoard);
 
+        for(int i = 0; i < length; i++){
+            for(int j = 0; j < width; j++){
+                board[i][j] = inputBrd.next().charAt(0);
+            }
+        }
+
+        String blank = input.nextLine();
         String word = input.nextLine();
         ArrayList<String> arrWords = new ArrayList<>();
 
@@ -166,6 +178,6 @@ public class CheckWordsInBoard {
 
         ArrayList<String> validWords = searchBoggle(board, word.toUpperCase(), arrWords);
         System.out.println(validWords);
-        // findAllWords(board);
+        findAllWords(board);
     }
 }
