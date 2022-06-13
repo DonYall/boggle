@@ -6,7 +6,8 @@ import java.awt.*;
 //NOT FINISHED 
 //still need to finish: connect with other part  
 public class BoggleGUI2 extends JFrame{
-	static boolean playerAI = true; 
+	//declare static variables 
+	static boolean playerAI = false; 
 	static int goesFirst = 1; 
 	static boolean allowPause = true; 
 	static boolean pause = true; 
@@ -21,7 +22,7 @@ public class BoggleGUI2 extends JFrame{
 	static boolean player1; 
 	static int player = 1; 
 	
-	public static void main (String args[])
+	public static void main (String args[]) // create main method 
 	{
 		//TESTING 
 		path.add("12");
@@ -35,6 +36,7 @@ public class BoggleGUI2 extends JFrame{
 		panInstruction.setPreferredSize(new Dimension(650,550)); 
 		
 		//INSTRUCTION PANEL 
+		//declare components for instruction label 
 		JLabel instructionLabel0 = new JLabel("INSTRUCTION: ");
 		JLabel instructionLabel1 = new JLabel("Boggle overview");
 		JLabel instructionLabel2 = new JLabel("Boggle is a Hasbro word game that requires 16 letter cubes, "); 
@@ -45,7 +47,7 @@ public class BoggleGUI2 extends JFrame{
 		JLabel instructionLabel7 = new JLabel("The goal of the game is have the highest point total. "); 
 		JLabel instructionLabel8 = new JLabel("To gain points, players must create words from the randomly assorted letters in the cube grid. "); 
 		JLabel instructionLabel9 = new JLabel("The longer the word, the higher the point value of the word, according to Boggle rules.");
-		
+		//add components to panInstruction
 		panInstruction.add(instructionLabel0); 
 		panInstruction.add(instructionLabel1); 
 		panInstruction.add(instructionLabel2); 
@@ -56,20 +58,23 @@ public class BoggleGUI2 extends JFrame{
  		panInstruction.add(instructionLabel7); 
  		panInstruction.add(instructionLabel8); 
  		panInstruction.add(instructionLabel9); 
-
+ 		//set visible of panInstruction to true 
  		panInstruction.setVisible(false);
 
  		//PAUSE PANEL 
+ 		//declare GUI components for panPause 
 		JPanel panPause = new JPanel(); 
 		JLabel pauseLabel = new JLabel("Game paused"); 
 		JButton resumeBtn = new JButton("Resume"); 
-		
-		pauseLabel.setFont(new Font("Bradley Hand", Font.BOLD, 40)); 
+		//add components to panPause
+		pauseLabel.setFont(new Font("Bradley Hand", Font.BOLD, 40)); //set font of the JLabel 
 		panPause.add(pauseLabel); 
 		panPause.add(resumeBtn);
+		//set visible to false 
 		panPause.setVisible(false);
 		
 		//PLAYING PANELS
+		//declare components for playing panels 
 		JPanel panGuess = new JPanel(new FlowLayout()); 
 		JPanel panBoggle = new JPanel(new GridLayout(map.length, map[0].length)); 
 		JPanel panAIGuess = new JPanel(new FlowLayout()); 
@@ -148,7 +153,6 @@ public class BoggleGUI2 extends JFrame{
 		//MENU - add menu items
 		menu.add(restart);
 		menu.add(instruction);  
-		menu.add(shakeUp); 
 		menu.add(customisation); 
 		
 		//HOME PAGE PANEL 
@@ -238,8 +242,6 @@ public class BoggleGUI2 extends JFrame{
 				frame.repaint(); 
 				frame.revalidate(); 
 				
-				changeColor(false); 
-				
 				frame.add(panInstruction); 
 				panInstruction.setVisible(true);
 				validate(); 
@@ -253,6 +255,8 @@ public class BoggleGUI2 extends JFrame{
 				frame.getContentPane().removeAll();
 				frame.repaint(); 
 				frame.revalidate(); 
+				
+				changeColor(false); 
 				
 				frame.add(panStart); 
 				panStart.setVisible(true);
@@ -270,7 +274,12 @@ public class BoggleGUI2 extends JFrame{
 		{
 			public void actionPerformed (ActionEvent e)
 			{
-				changeColor(false); 
+				for (int i =0; i<map.length; i++) {
+					for (int j=0; j<map[i].length; j++)
+					{
+						showMap[i][j].setBackground(Color.WHITE); 
+					}
+				}
 				//randomise the dice 
 			}
 		}
@@ -348,11 +357,12 @@ public class BoggleGUI2 extends JFrame{
 					{
 						showMap[i][j] = new JLabel(Character.toString(map[i][j])); 
 						panBoggle.add(showMap[i][j]); 
-						showMap[i][j].setOpaque(true);
 						showMap[i][j].setBackground(Color.WHITE); 
+						showMap[i][j].setOpaque(true);
 					}
 				}
 				
+				changeColor(false); 
 				frame.add(panBoggle); 
 				panBoggle.setVisible(true); 
 			}
@@ -363,6 +373,8 @@ public class BoggleGUI2 extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e) {
 				String guess = guessIn.getText(); 
+				System.out.println(player); 
+				changeColor(false); 
 				
 				switch(player%2)
 				{
@@ -397,23 +409,22 @@ public class BoggleGUI2 extends JFrame{
 									
 					}
 					changeColor(true); 
-					counter ++; 
 					break; 
 				}
 				
-				//WHERE THE FUCK IS BUG 
-				System.out.println("panInstruction: " + panInstruction.isShowing()); 
-				System.out.println("panPause: " + panPause.isShowing()); 
-				System.out.println("panGuess: " + panGuess.isShowing()); 
-				System.out.println("panBoggle: " + panBoggle.isShowing()); 
-				System.out.println("panAIGuess: " + panAIGuess.isShowing()); 
-				System.out.println("panCustomisation: " + panCustomisation.isShowing()); 
-				System.out.println("panStart: " + panStart.isShowing()); 
-				
+				if (playerAI)
+				{
+					player++; 
+				}
 				
 				for (int i =0; i<guess.length(); i++)
 				{
 					word = word + guess.substring(i).toUpperCase(); 
+				}
+				
+				if (counter == 2)
+				{
+					menu.add(shakeUp); 
 				}
 			}
 		}
@@ -444,6 +455,7 @@ public class BoggleGUI2 extends JFrame{
 				{
 					System.out.println(" colorToWhite invoked"); 
 					showMap[row][col].setBackground(Color.WHITE); 
+					showMap[row][col].setOpaque(true);
 				}
 			}
 		}
