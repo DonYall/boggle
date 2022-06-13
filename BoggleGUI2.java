@@ -11,7 +11,8 @@ public class BoggleGUI2 extends JFrame{
 	static int goesFirst = 1; 
 	static boolean allowPause = true; 
 	static boolean pause = true; 
-	static int score = 0; 
+	static int score1 = 0; 
+	static int score2 = 0; 
 	static int goal = 15; 
 	static String word = ""; 
 	static char[][] map=  {{'A', 'A', 'A', 'F', 'R', 'S'}, {'A', 'E', 'E', 'G', 'M', 'U'}, {'C', 'E', 'I', 'I', 'L', 'T'},{ 'D', 'H', 'H', 'N', 'O', 'T'}, {'F', 'I', 'P', 'R', 'S', 'Y'}};
@@ -30,7 +31,7 @@ public class BoggleGUI2 extends JFrame{
 		
 		//creating GUI components 
 		JFrame frame = new JFrame("boggle game"); 
-		frame.setSize(650, 550); 
+		frame.setSize(750, 680); 
 		
 		JPanel panInstruction = new JPanel();
 		panInstruction.setPreferredSize(new Dimension(650,550)); 
@@ -78,18 +79,31 @@ public class BoggleGUI2 extends JFrame{
 		JPanel panGuess = new JPanel(new FlowLayout()); 
 		JPanel panBoggle = new JPanel(new GridLayout(map.length, map[0].length)); 
 		JPanel panAIGuess = new JPanel(new FlowLayout()); 
+		JPanel panScore= new JPanel (new FlowLayout()); 
 		JLabel guessLabel = new JLabel("What is your answer? "); 
 		JTextField guessIn = new JTextField("Please enter your answer here"); 
 		JButton guessBtn = new JButton("Enter"); 
 		JLabel computerLabel0 = new JLabel("The answer from computer is... "); 
 		JLabel computerLabel1 = new JLabel("still thinking... "); 
+		JLabel scoreLabel0 = new JLabel("Current score of player 1:"); 
+		JLabel scoreLabel1 = new JLabel("0"); 
+		JLabel scoreLabel2 = new JLabel("          Current score of player 2:"); 
+		JLabel scoreLabel3 = new JLabel("0"); 
+		
+		panScore.setPreferredSize(new Dimension(3, 550));
+		panBoggle.setPreferredSize(new Dimension(600, 550)); 
 		
 		panGuess.add(guessLabel);  
 		panGuess.add(guessIn); 
 		panGuess.add(guessBtn); 
 		panAIGuess.add(computerLabel0); 
 		panAIGuess.add(computerLabel1); 
+		panScore.add(scoreLabel0);
+		panScore.add(scoreLabel1); 
+		panScore.add(scoreLabel2); 
+		panScore.add(scoreLabel3); 
 		
+		panScore.setVisible(false); 
 		panBoggle.setVisible(false);
 		panGuess.setVisible(false);
 		panAIGuess.setVisible(false);
@@ -363,7 +377,9 @@ public class BoggleGUI2 extends JFrame{
 				}
 				
 				changeColor(false); 
-				frame.add(panBoggle); 
+				frame.add(panBoggle, BorderLayout.SOUTH); 
+				frame.add(panScore, BorderLayout.CENTER); 
+				panScore.setVisible(true);
 				panBoggle.setVisible(true); 
 			}
 		}
@@ -371,7 +387,8 @@ public class BoggleGUI2 extends JFrame{
 		
 		class guessBtnPressed extends JFrame implements ActionListener
 		{
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) { 
+				String scoreString; 
 				String guess = guessIn.getText(); 
 				System.out.println(player); 
 				changeColor(false); 
@@ -383,6 +400,9 @@ public class BoggleGUI2 extends JFrame{
 					// check word is valid or not 
 					// if it is valid, update the gui, return path 
 					//path stored when checking valid or not
+					score1 = score1 + 5; // 5 should be a value returned by a method 
+					scoreString = Integer.toString(score1); 
+					scoreLabel0.setText(scoreString); 
 					
 					changeColor(true); 
 					
@@ -396,6 +416,10 @@ public class BoggleGUI2 extends JFrame{
 						//check if it is valid 
 						//if it is valid, update the gui 
 						//path stored when checking valid or not 
+						
+						score2 = score2 + 5; // 5 should be a value returned by a method 
+						scoreString = Integer.toString(score2); 
+						scoreLabel0.setText(scoreString); 
 					}
 					break; 
 					
@@ -406,7 +430,10 @@ public class BoggleGUI2 extends JFrame{
 						// check word is valid or not
 						// if it is valid, update the gui, return path 
 						//path stored when checking valid or not 
-									
+						
+						score2 = score2 + 5; // 5 should be a value returned by a method 
+						scoreString = Integer.toString(score2); 
+						scoreLabel2.setText(scoreString); 
 					}
 					changeColor(true); 
 					break; 
