@@ -132,8 +132,10 @@ public class CheckWordsInBoard {
                     }
                     ArrayList<String> validWords = searchBoggle(board, words, arrWords);
 
-                    if(!validWords.isEmpty() && !dicWords.contains(validWords.toString())) {
-                        dicWords.add(validWords.get(0).toString());
+                    if(!validWords.isEmpty()) {
+                        if(!(dicWords.contains(validWords.get(0).toString()))){
+                            dicWords.add(validWords.get(0).toString());
+                        }
                     }
                 }
             }
@@ -176,8 +178,9 @@ public class CheckWordsInBoard {
             System.out.println("");
         }
 
-        String blank = input.nextLine();*/
-        String word = input.nextLine();
+        String blank = input.nextLine();
+        */
+        String word = input.nextLine().toUpperCase();
         ArrayList<String> arrWords = new ArrayList<>();
 
         for(int i = 0; i < word.length(); i++) {
@@ -185,7 +188,7 @@ public class CheckWordsInBoard {
         }
 
         // This method is a bit suspect
-        ArrayList<String> validWords = searchBoggle(board, word.toUpperCase(), arrWords);
+        ArrayList<String> validWords = searchBoggle(board, word, arrWords);
         System.out.println(validWords);
         findAllWords(board);
     }
