@@ -73,10 +73,10 @@ public class CheckWordsInBoard {
 
         boolean[][] processed = new boolean[board.length][board[0].length];
 
-        for(int i = 0; i < board.length ; i++ ) {
-            for (int j = 0; j <board[0].length ; j++) {
+        for(int i = 0; i < board.length; i++ ) {
+            for (int j = 0; j <board[0].length; j++) {
                 if(board[i][j] == word.charAt(0)) {
-                    intStartR = i ;
+                    intStartR = i;
                     intStartC = j;
                     searchBoggle(board, word, arrWords, result, processed, intStartR, intStartC, "");
                     if(result.size() > 0) {
@@ -132,8 +132,8 @@ public class CheckWordsInBoard {
                     }
                     ArrayList<String> validWords = searchBoggle(board, words, arrWords);
 
-                    if(!validWords.isEmpty()) {
-                        dicWords.add(validWords.toString());
+                    if(!validWords.isEmpty() && !dicWords.contains(validWords.toString())) {
+                        dicWords.add(validWords.get(0).toString());
                     }
                 }
             }
@@ -148,14 +148,16 @@ public class CheckWordsInBoard {
         Scanner input = new Scanner(System.in);
         // Still can't find a way to read from file without the future methods taking
         // 10 years to complete :/
-        // Fixing it rn
-        /*char [][] board = {
+        // Fixed, kind of
+        char [][] board = {
                 {'W', 'S', 'J', 'T', 'R'},
                 {'U', 'L', 'M', 'O', 'E'},
                 {'C', 'F', 'X', 'K', 'Y'},
                 {'T', 'A', 'N', 'D', 'L'},
                 {'B', 'H', 'B', 'J', 'E'},
-        };*/
+        };
+
+        /*
         int length = input.nextInt();
         int width = input.nextInt();
         char [][] board = new char[length][width]; // You can replace this with other char arrays
@@ -167,8 +169,14 @@ public class CheckWordsInBoard {
                 board[i][j] = inputBrd.next().charAt(0);
             }
         }
+        for(int i = 0; i < length; i++){
+            for(int j = 0; j < width; j++){
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println("");
+        }
 
-        String blank = input.nextLine();
+        String blank = input.nextLine();*/
         String word = input.nextLine();
         ArrayList<String> arrWords = new ArrayList<>();
 
@@ -176,6 +184,7 @@ public class CheckWordsInBoard {
             arrWords.add(Character.toString(word.charAt(i))) ;
         }
 
+        // This method is a bit suspect
         ArrayList<String> validWords = searchBoggle(board, word.toUpperCase(), arrWords);
         System.out.println(validWords);
         findAllWords(board);
