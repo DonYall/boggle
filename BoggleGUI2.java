@@ -117,7 +117,7 @@ public class BoggleGUI2 extends JFrame{
 		JLabel playersMode = new JLabel("Which mdoe would you like to choose? "); 
 		JButton singlePlayerBtn = new JButton("Single Player"); 
 		JButton twoPlayerBtn = new JButton("Two Player"); 
-		JLabel whoStartLabel = new JLabel("Who wants to start first? If you chose single player"); 
+		JLabel whoStartLabel = new JLabel("Who wants to start first? If you chose single player mode, "); 
 		JButton player1Btn = new JButton("Player1"); 
 		JButton player2Btn = new JButton("Player2"); 
 		JLabel allowPauseLabel = new JLabel("Will this game allow pausing? "); 
@@ -134,7 +134,7 @@ public class BoggleGUI2 extends JFrame{
 		panCustomisation.add(singlePlayerBtn); 
 		panCustomisation.add(twoPlayerBtn); 
 		panCustomisation.add(whoStartLabel);
-		panCustomisation.add(new JLabel(" mode, you are player1 while the AI is player2"));
+		panCustomisation.add(new JLabel(" you are player1 while the AI is player2"));
 		panCustomisation.add(player1Btn);
 		panCustomisation.add(player2Btn); 
 		panCustomisation.add(allowPauseLabel); 
@@ -238,7 +238,6 @@ public class BoggleGUI2 extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e) {
 				goesFirst = 2; 
-				
 			}
 		}
 		player2Btn.addActionListener(new player2Pressed()); 
@@ -246,6 +245,10 @@ public class BoggleGUI2 extends JFrame{
 		class yesPressed extends JFrame implements ActionListener
 		{
 			public void actionPerformed(ActionEvent e) {
+				if (!allowPause)
+				{
+					pauseMenu.add(pauseOp); 
+				}
 				allowPause = true; 
 			}
 		}
@@ -255,6 +258,7 @@ public class BoggleGUI2 extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e) {
 				allowPause = false; 
+				pauseMenu.remove(pauseOp); 
 			}
 		}
 		noBtn.addActionListener(new noPressed()); 
@@ -324,6 +328,11 @@ public class BoggleGUI2 extends JFrame{
 				frame.add(panCustomisation); 
 				panCustomisation.setVisible(true);
 				validate(); 
+				
+				//choose player mode (default player to ai)
+				//point to play (default 15 points )
+				//allow pause or not (default "allowed")
+				//who goes first (default player 1)
 			}
 			
 		}
@@ -380,6 +389,7 @@ public class BoggleGUI2 extends JFrame{
 				//panBoggle.removeAll();
 				//panBoggle.repaint(); 
 				//panBoggle.revalidate();
+				//this for loop suppose to be something 
 				
 				changeColor(false); 
 				frame.add(panBoggle, BorderLayout.SOUTH); 
