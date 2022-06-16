@@ -1,10 +1,14 @@
 package BoggleGame;
 import javax.swing.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.Timer;
 import java.awt.*; 
+
 //NOT FINISHED 
 //still need to finish: connect with other part  
+//added timer , this is following the boggle rule 
+
 public class BoggleGUI2 extends JFrame{
 	//declare static variables 
 	static boolean playerAI = false; 
@@ -15,20 +19,21 @@ public class BoggleGUI2 extends JFrame{
 	static int score2 = 0; 
 	static int goal = 15; 
 	static String word = ""; 
-	static char[][] map=  {{'A', 'A', 'A', 'F', 'R', 'S'}, {'A', 'E', 'E', 'G', 'M', 'U'}, {'C', 'E', 'I', 'I', 'L', 'T'},{ 'D', 'H', 'H', 'N', 'O', 'T'}, {'F', 'I', 'P', 'R', 'S', 'Y'}};
 	//static char[][]= Dice.getDice(); 
+	static Dice dice = new Dice(); 
+	static char [][] map = dice.getDice(); 
 	static JLabel[][] showMap = new JLabel [map.length][map[0].length]; 
 	static int counter = 0; 
 	static ArrayList<String> path = new ArrayList<String>(); 
 	static boolean player1; 
 	static int player = 1; 
 	static boolean played = false; 
+	static int wordGuessedValid = 0; 
+	
 	
 	public static void main (String args[]) // create main method 
 	{
-		//TESTING 
-		path.add("12");
-		path.add("13"); 
+		
 		
 		//creating GUI components 
 		JFrame frame = new JFrame("boggle game"); 
@@ -198,6 +203,38 @@ public class BoggleGUI2 extends JFrame{
 			}
 		}
 		
+		class timerChangePlayer 
+		{
+			static Timer timer = new Timer(); 
+			public static void change()
+			{
+				timer.schedule(new TimerTask() {
+					public void run()
+					{
+						int score; 
+						if (player == 1)
+						{
+							player = 2; 
+						}
+						else 
+						{
+							player = 1; 
+							if (playerAI)
+							{
+								//those Ai things 
+							}
+						}
+					}
+				}, 0, 15000); 
+			}
+			
+			public static void stopTimer()
+			{
+				timer.cancel(); 
+			}
+		}
+		
+		
 		class ptBtnPressed extends JFrame implements ActionListener
 		{
 			public void actionPerformed(ActionEvent e) {
@@ -285,6 +322,9 @@ public class BoggleGUI2 extends JFrame{
 				frame.repaint();
 				frame.revalidate(); 
 				
+				score1 = 0; 
+				score2 = 0; 
+				
 				if (played) 
 				{
 					changeColor(false); 
@@ -295,9 +335,7 @@ public class BoggleGUI2 extends JFrame{
 				panStart.setVisible(true);
 				validate(); 
 				
-				//randomise the dice 
-				//set score to zero 
-				//stop timer 
+				timerChangePlayer.stopTimer();
 			}
 			
 		}
@@ -307,17 +345,12 @@ public class BoggleGUI2 extends JFrame{
 		{
 			public void actionPerformed (ActionEvent e)
 			{
-				for (int i =0; i<map.length; i++) {
-					for (int j=0; j<map[i].length; j++)
-					{
-						showMap[i][j].setBackground(Color.WHITE); 
-					}
-				}
-				//randomise the dice 
+				changeColor(false); 
+				randomizeBoggle(); 
 			}
 		}
 		shakeUp.addActionListener(new shakeUpPressed());
-		
+
 		class customisationPressed extends JFrame implements ActionListener
 		{
 			public void actionPerformed(ActionEvent e) {
@@ -328,11 +361,6 @@ public class BoggleGUI2 extends JFrame{
 				frame.add(panCustomisation); 
 				panCustomisation.setVisible(true);
 				validate(); 
-				
-				//choose player mode (default player to ai)
-				//point to play (default 15 points )
-				//allow pause or not (default "allowed")
-				//who goes first (default player 1)
 			}
 			
 		}
@@ -386,83 +414,15 @@ public class BoggleGUI2 extends JFrame{
 				frame.add(panGuess, BorderLayout.NORTH); 
 				panGuess.setVisible(true); 
 				
-				//panBoggle.removeAll();
-				//panBoggle.repaint(); 
-				//panBoggle.revalidate();
-				//this for loop suppose to be something 
+				randomizeBoggle(); 
 				
 				changeColor(false); 
 				frame.add(panBoggle, BorderLayout.SOUTH); 
 				frame.add(panScore, BorderLayout.CENTER); 
 				panScore.setVisible(true);
 				panBoggle.setVisible(true); 
-			}
-		}
-		playBtn.addActionListener(new playPressed()); 
-		
-		class guessBtnPressed extends JFrame implements ActionListener
-		{
-			public void actionPerformed(ActionEvent e) { 
-				String scoreString; 
-				String guess = guessIn.getText(); 
-				System.out.println(player); 
-				changeColor(false); //turn the previous cell back to white 
 				
-				switch(player%2)
-				{
-				case 1: 
-					//player 1 
-					// check word is valid or not 
-					// if it is valid, update the gui, return path 
-					//path stored when checking valid or not
-					score1 = score1 + 5; // 5 should be a value returned by a method 
-					scoreString = Integer.toString(score1); 
-					scoreLabel1.setText(scoreString); 
-					
-					changeColor(true); 
-					
-					if (playerAI)
-					{
-						frame.remove(panGuess); 
-						frame.add(panAIGuess); 
-						panAIGuess.setVisible(true); 
-						
-						//word = the thing that AI generated 
-						//check if it is valid 
-						//if it is valid, update the gui 
-						//path stored when checking valid or not 
-						
-						score2 = score2 + 5; // 5 should be a value returned by a method 
-						scoreString = Integer.toString(score2); 
-						scoreLabel1.setText(scoreString); 
-					}
-					break; 
-					
-				case 2: 
-					//player 2
-					if (!playerAI) 
-					{
-						// check word is valid or not
-						// if it is valid, update the gui, return path 
-						//path stored when checking valid or not 
-						
-						score2 = score2 + 5; // 5 should be a value returned by score related method 
-						scoreString = Integer.toString(score2); 
-						scoreLabel3.setText(scoreString); 
-					}
-					changeColor(true); 
-					break; 
-				}
-				
-				if (playerAI)
-				{
-					player++; 
-				}
-				
-				for (int i =0; i<guess.length(); i++)
-				{
-					word = word + guess.substring(i).toUpperCase(); 
-				}
+				timerChangePlayer.change(); 
 				
 				if (counter == 2)
 				{
@@ -470,8 +430,30 @@ public class BoggleGUI2 extends JFrame{
 				}
 			}
 		}
+		playBtn.addActionListener(new playPressed()); 
+		
+		//THIS PART NEEDED SCORE RELATED THING 
+		class guessBtnPressed extends JFrame implements ActionListener
+		{
+			public void actionPerformed(ActionEvent e) { 
+				//String scoreString; 
+				String guess = guessIn.getText(); 
+				System.out.println(player); 
+				changeColor(false); //turn the previous cell back to white 
+				System.out.println("the current player is " + player); 
+				
+				counter ++; 
+				if (player ==1)
+				{
+					scoreLabel1.setText(Integer.toString(counter));
+				}
+				else 
+				{
+					scoreLabel3.setText(Integer.toString(counter));
+				}
+			}
+		}
 		guessBtn.addActionListener(new guessBtnPressed()); 
-			
 	}
 	
 	
@@ -501,5 +483,39 @@ public class BoggleGUI2 extends JFrame{
 				}
 			}
 		}
+	}
+	
+	public static void randomizeBoggle()
+	{
+		dice.shuffle(); 
+		map= dice.getDice(); 
+		for (int i =0; i<map.length; i++)
+		{
+			for (int j =0; j<map[i].length; j++)
+			{
+				showMap[i][j].setText(Character.toString(map[i][j]));
+			}
+		}
+	}
+	
+	public static ArrayList<String> aiGuess() {
+		Dice dice = new Dice();
+		dice.shuffle();
+		char[][] board = dice.getDice();
+
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				System.out.print(board[i][j] + " ");
+			}
+			System.out.println();
+		}
+		
+		int difficulty = 5; // 1, 2, 3, 4, or 5
+		GetAllWords gaw = new GetAllWords();
+		
+		int wordsToGuess = difficulty+2;
+		ArrayList<String> words = gaw.getWords(board, wordsToGuess);
+		
+		return words; 
 	}
 }
