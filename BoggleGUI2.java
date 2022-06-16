@@ -188,6 +188,16 @@ public class BoggleGUI2 extends JFrame{
 		frame.add(panStart, BorderLayout.NORTH); 
 		frame.setVisible(true); 
 		
+		for (int i =0; i<map.length; i++) {
+			for (int j=0; j<map[i].length; j++)
+			{
+				showMap[i][j] = new JLabel(Character.toString(map[i][j])); 
+				panBoggle.add(showMap[i][j]); 
+				showMap[i][j].setBackground(Color.WHITE); 
+				showMap[i][j].setOpaque(true);
+			}
+		}
+		
 		class ptBtnPressed extends JFrame implements ActionListener
 		{
 			public void actionPerformed(ActionEvent e) {
@@ -372,16 +382,10 @@ public class BoggleGUI2 extends JFrame{
 				frame.add(panGuess, BorderLayout.NORTH); 
 				panGuess.setVisible(true); 
 				
+				//panBoggle.removeAll();
+				//panBoggle.repaint(); 
+				//panBoggle.revalidate();
 				//this for loop suppose to be something 
-				for (int i =0; i<map.length; i++) {
-					for (int j=0; j<map[i].length; j++)
-					{
-						showMap[i][j] = new JLabel(Character.toString(map[i][j])); 
-						panBoggle.add(showMap[i][j]); 
-						showMap[i][j].setBackground(Color.WHITE); 
-						showMap[i][j].setOpaque(true);
-					}
-				}
 				
 				changeColor(false); 
 				frame.add(panBoggle, BorderLayout.SOUTH); 
