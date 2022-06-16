@@ -58,7 +58,6 @@ public class CheckWordsInBoard {
         boolean[][] processed = new boolean[board.length][board[0].length];
 
         searchBoggle(board, word, result, processed, intStartR, intStartC, "");
-        //searchBoggle(board, word, arrWords, result, processed, intStartR, intStartC, "");
         if(result.size() > 0) {
             return result;
         }
