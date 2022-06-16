@@ -324,11 +324,6 @@ public class BoggleGUI2 extends JFrame{
 				frame.add(panCustomisation); 
 				panCustomisation.setVisible(true);
 				validate(); 
-				
-				//choose player mode (default player to ai)
-				//point to play (default 15 points )
-				//allow pause or not (default "allowed")
-				//who goes first (default player 1)
 			}
 			
 		}
@@ -385,7 +380,6 @@ public class BoggleGUI2 extends JFrame{
 				//panBoggle.removeAll();
 				//panBoggle.repaint(); 
 				//panBoggle.revalidate();
-				//this for loop suppose to be something 
 				
 				changeColor(false); 
 				frame.add(panBoggle, BorderLayout.SOUTH); 
