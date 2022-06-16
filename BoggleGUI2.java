@@ -22,6 +22,7 @@ public class BoggleGUI2 extends JFrame{
 	static ArrayList<String> path = new ArrayList<String>(); 
 	static boolean player1; 
 	static int player = 1; 
+	static boolean played = false; 
 	
 	public static void main (String args[]) // create main method 
 	{
@@ -267,10 +268,14 @@ public class BoggleGUI2 extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e) {
 				frame.getContentPane().removeAll();
-				frame.repaint(); 
+				frame.repaint();
 				frame.revalidate(); 
 				
-				changeColor(false); 
+				if (played) 
+				{
+					changeColor(false); 
+					played = false; 
+				}
 				
 				frame.add(panStart); 
 				panStart.setVisible(true);
@@ -357,6 +362,8 @@ public class BoggleGUI2 extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("playPressed"); 
 				
+				played = true; 
+				
 				frame.getContentPane().removeAll();
 				frame.repaint(); 
 				frame.revalidate();
@@ -391,7 +398,7 @@ public class BoggleGUI2 extends JFrame{
 				String scoreString; 
 				String guess = guessIn.getText(); 
 				System.out.println(player); 
-				changeColor(false); 
+				changeColor(false); //turn the previous cell back to white 
 				
 				switch(player%2)
 				{
@@ -402,7 +409,7 @@ public class BoggleGUI2 extends JFrame{
 					//path stored when checking valid or not
 					score1 = score1 + 5; // 5 should be a value returned by a method 
 					scoreString = Integer.toString(score1); 
-					scoreLabel0.setText(scoreString); 
+					scoreLabel1.setText(scoreString); 
 					
 					changeColor(true); 
 					
@@ -419,7 +426,7 @@ public class BoggleGUI2 extends JFrame{
 						
 						score2 = score2 + 5; // 5 should be a value returned by a method 
 						scoreString = Integer.toString(score2); 
-						scoreLabel0.setText(scoreString); 
+						scoreLabel1.setText(scoreString); 
 					}
 					break; 
 					
@@ -431,9 +438,9 @@ public class BoggleGUI2 extends JFrame{
 						// if it is valid, update the gui, return path 
 						//path stored when checking valid or not 
 						
-						score2 = score2 + 5; // 5 should be a value returned by a method 
+						score2 = score2 + 5; // 5 should be a value returned by score related method 
 						scoreString = Integer.toString(score2); 
-						scoreLabel2.setText(scoreString); 
+						scoreLabel3.setText(scoreString); 
 					}
 					changeColor(true); 
 					break; 
