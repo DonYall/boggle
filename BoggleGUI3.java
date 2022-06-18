@@ -1,22 +1,22 @@
 package BoggleGame;
 import javax.swing.*;
+import javax.swing.Timer;
 
 import java.awt.event.*;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.Timer;
+//import java.util.Timer;
 import javax.swing.Timer.*; 
 import java.awt.*; 
 
 //NOT FINISHED 
-//still need to finish: bug for showing 15 second timer part, user friendliness  
+//still need to finish: user friendliness  
 //There is a bug which is, repeated answer should not get mark. But it does
-//Also, have to make point to play thing, the game won't stop after it reached required point 
 public class BoggleGUI3 extends JFrame{
 	//declare static variables 
 	static boolean playerAI = false; 
-	static int goesFirst = 1; 
 	static boolean allowPause = true; 
 	static boolean pause = true; 
 	static int score1 = 0; 
@@ -98,6 +98,8 @@ public class BoggleGUI3 extends JFrame{
 		JLabel scoreLabel1 = new JLabel("0"); 
 		JLabel scoreLabel2 = new JLabel("          Current score of player 2:"); 
 		JLabel scoreLabel3 = new JLabel("0"); 
+		JLabel winnerLabel = new JLabel(); 
+		JButton homeBtn = new JButton("Back to homepage"); 
 		
 		panScore.setPreferredSize(new Dimension(3, 550));
 		panBoggle.setPreferredSize(new Dimension(600, 550)); 
@@ -208,14 +210,13 @@ public class BoggleGUI3 extends JFrame{
 		
 		class timerChangePlayer 
 		{
-			java.util.Timer timer; 
+			Timer timer; 
 
 			public  void change()
 			{
-				timer = new Timer(); 
-
-				timer.schedule(new TimerTask() {
-					public void run()
+				timer = new Timer(15000, new ActionListener() {
+					
+					public void actionPerformed(ActionEvent e)
 					{
 						int score; 
 						if (player == 1)
@@ -247,14 +248,20 @@ public class BoggleGUI3 extends JFrame{
 							}
 						}
 					}
-				}, 0, 15000); 
-			}
+				}); 			}
 			
 			public void stopTimer()
 			{
-				timer.cancel(); 
-				timer.purge(); 
+				if (timer.isRunning())
+				{
+					timer.stop(); 
+				}
 			}
+			
+			//public void restartTimer()
+			//{
+			//	timer.restart(); 
+			//}
 		}
 		timerChangePlayer timerChangePlayer = new timerChangePlayer();
 		
@@ -291,7 +298,7 @@ public class BoggleGUI3 extends JFrame{
 		class player1Pressed extends JFrame implements ActionListener
 		{
 			public void actionPerformed(ActionEvent e) {
-				goesFirst = 1; 
+				player = 1; 
 			}
 		}
 		player1Btn.addActionListener(new player1Pressed()); 
@@ -299,7 +306,7 @@ public class BoggleGUI3 extends JFrame{
 		class player2Pressed extends JFrame implements ActionListener
 		{
 			public void actionPerformed(ActionEvent e) {
-				goesFirst = 2; 
+				player = 2; 
 			}
 		}
 		player2Btn.addActionListener(new player2Pressed()); 
@@ -349,6 +356,8 @@ public class BoggleGUI3 extends JFrame{
 				
 				score1 = 0; 
 				score2 = 0; 
+				scoreLabel1.setText("0"); 
+				scoreLabel3.setText("0"); 
 				
 				if (played) 
 				{
@@ -455,9 +464,12 @@ public class BoggleGUI3 extends JFrame{
 				{
 					menu.add(shakeUp); 
 				}
+				
+				
 			}
 		}
 		playBtn.addActionListener(new playPressed()); 
+		homeBtn.addActionListener(new restartPressed()); 
 		
 		//
 		class guessBtnPressed extends JFrame implements ActionListener
@@ -490,16 +502,37 @@ public class BoggleGUI3 extends JFrame{
 				{
 					System.out.println("Invalid answer"); 
 				}
+				
+				if (score1 == goal||score2==goal)
+				{
+					frame.getContentPane().removeAll();
+					frame.repaint(); 
+					frame.revalidate();
+					
+					if (score1 ==goal)
+					{
+						winnerLabel.setText("Player 1 won! ");
+						frame.add(winnerLabel, BorderLayout.CENTER); 
+					}
+					else 
+					{
+						if (playerAI)
+						{
+							winnerLabel.setText("The AI won! "); 
+							frame.add(winnerLabel, BorderLayout.CENTER); 
+						}
+						else 
+						{
+							winnerLabel.setText("Player 2 won! ");
+							frame.add(winnerLabel, BorderLayout.CENTER); 
+						}
+					}
+					
+					frame.add(homeBtn, BorderLayout.SOUTH); 
+				}
 			}
 		}
 		guessBtn.addActionListener(new guessBtnPressed()); 
-		
-		/*
-		 * class aiGuessScore { ArrayList<String> aiGuesses = aiGuess(); int score = 5;
-		 * int currentScore = Integer.parseInt(scoreLabel3.getText());
-		 * scoreLabel3.setText(Integer.toString(score+currentScore));
-		 * //scoreLabel3.setText(Integer.toString(score + currentScore)); }
-		 */
 	}
 	
 	
@@ -590,7 +623,7 @@ class countdownTimerShow extends JPanel
 {
 	private LocalDateTime startTime; 
     private JLabel label; 
-    private javax.swing.Timer countdown;
+    protected javax.swing.Timer countdown;
 
     private Duration duration = Duration.ofSeconds(15);
 	
