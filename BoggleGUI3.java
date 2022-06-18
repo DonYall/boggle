@@ -1,14 +1,18 @@
 package BoggleGame;
 import javax.swing.*;
+
 import java.awt.event.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.Timer;
+import javax.swing.Timer.*; 
 import java.awt.*; 
 
 //NOT FINISHED 
 //still need to finish: bug for showing 15 second timer part, user friendliness  
+//There is a bug which is, repeated answer should not get mark. But it does
+//Also, have to make point to play thing, the game won't stop after it reached required point 
 public class BoggleGUI3 extends JFrame{
 	//declare static variables 
 	static boolean playerAI = false; 
@@ -204,7 +208,7 @@ public class BoggleGUI3 extends JFrame{
 		
 		class timerChangePlayer 
 		{
-			Timer timer; 
+			java.util.Timer timer; 
 
 			public  void change()
 			{
@@ -249,56 +253,12 @@ public class BoggleGUI3 extends JFrame{
 			public void stopTimer()
 			{
 				timer.cancel(); 
+				timer.purge(); 
 			}
 		}
 		timerChangePlayer timerChangePlayer = new timerChangePlayer();
 		
-		class countdownTimerShow
-		{
-			public void countdownTimerShow()
-			{
-				Duration duration = Duration.ofSeconds(15); 
-				Timer countdown; 
-				LocalDateTime startTime; 
-//				
-//				if(countdown.isRunning())
-//				{
-//					countdown.stop(); 
-//					startTime = null; 
-//				}
-//				else 
-//				{
-					
-//				}
-				
-				countdown = new Timer(); 
-				countdown.schedule(new TimerTask() {
-					public void run()
-					{
-						LocalDateTime now = LocalDateTime.now(); 
-						Duration runningTime = Duration.between(startTime, now);
-		                Duration timeLeft = duration.minus(runningTime);
-		                if (timeLeft.isZero() || timeLeft.isNegative()) {
-		                    timeLeft = Duration.ZERO;
-		                   if(countdown.isRunning())
-		    				{
-		        				countdown.stop(); 
-		        				startTime = null; 
-		        			}
-		    				else 
-		    				{
-		        				startTime = LocalDateTime.now(); 
-		        				countdown.start(); 
-		        			}
-		                }
-					}
-
-                }); 
-				
-				startTime = LocalDateTime.now(); 
-				countdown.start(); 
-			}
-		}
+		
 		
 		class ptBtnPressed extends JFrame implements ActionListener
 		{
@@ -484,7 +444,8 @@ public class BoggleGUI3 extends JFrame{
 				
 				changeColor(false); 
 				frame.add(panBoggle, BorderLayout.SOUTH); 
-				frame.add(panScore, BorderLayout.CENTER); 
+				frame.add(panScore, BorderLayout.CENTER);
+				//frame.add(new countdownTimerShow()); 
 				panScore.setVisible(true);
 				panBoggle.setVisible(true); 
 				
@@ -498,7 +459,7 @@ public class BoggleGUI3 extends JFrame{
 		}
 		playBtn.addActionListener(new playPressed()); 
 		
-		//THIS PART NEEDED SCORE RELATED THING 
+		//
 		class guessBtnPressed extends JFrame implements ActionListener
 		{
 			public void actionPerformed(ActionEvent e) { 
@@ -520,7 +481,7 @@ public class BoggleGUI3 extends JFrame{
 					{
 						score2 = score2 + score(guess); 
 						System.out.println("The score2 is " + score2); 
-						scoreLabel1.setText(Integer.toString(score2));
+						scoreLabel3.setText(Integer.toString(score2));
 						//scoreLabel1.setText("I am dead"); 
 						
 					}
@@ -622,5 +583,42 @@ public class BoggleGUI3 extends JFrame{
 			score +=11;
 		}
 		return score;
+	}
+}
+
+class countdownTimerShow extends JPanel
+{
+	private LocalDateTime startTime; 
+    private JLabel label; 
+    private javax.swing.Timer countdown;
+
+    private Duration duration = Duration.ofSeconds(15);
+	
+	public  countdownTimerShow()
+	{
+		add(label); 
+		countdown = new Timer(500, new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				//LocalDateTime startTime; 
+				LocalDateTime now = LocalDateTime.now(); 
+				Duration runningTime = Duration.between(startTime, now);
+                Duration timeLeft = duration.minus(runningTime);
+                if (timeLeft.isZero() || timeLeft.isNegative()) {
+                    timeLeft = Duration.ZERO;
+                   countdown.start(); 
+                }
+                
+                label.setText(format(timeLeft));
+			}
+			
+        }); 
+	}
+	
+	protected String format (Duration duration)
+	{
+		long seconds = duration.toMillis()/10000; 
+		return String.format("%02ds",seconds); 
+		
 	}
 }
