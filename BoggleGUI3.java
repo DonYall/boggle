@@ -13,7 +13,7 @@ import java.awt.*;
 
 //NOT FINISHED 
 //still need to finish: user friendliness  
-//There is a bug which is, repeated answer should not get mark. But it does
+//There is a bug which is, repeated answer should not get mark. But it does. 
 public class BoggleGUI3 extends JFrame{
 	//declare static variables 
 	static boolean playerAI = false; 
