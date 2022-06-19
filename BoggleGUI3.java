@@ -26,7 +26,7 @@ public class BoggleGUI3 extends JFrame {
 	static int score1 = 0;
 	static int score2 = 0;
 	static int goal = 15;
-	static String word = "";
+	static String word = ""; 
 	// static char[][]= Dice.getDice();
 	static Dice dice = new Dice();
 	static char[][] map = dice.getDice();
