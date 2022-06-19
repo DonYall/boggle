@@ -611,7 +611,7 @@ public class Boggle extends JFrame{
 				showMap[i][j].setText(Character.toString(map[i][j]));
 			}
 		}
-	}
+	} 
 	
 	public static ArrayList<String> aiGuess() {
 		Dice dice = new Dice();
