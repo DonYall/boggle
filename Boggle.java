@@ -2,8 +2,9 @@ package BoggleGame;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.time.*; 
 import java.util.*;
 
 import javax.swing.*;
@@ -22,12 +23,18 @@ public class Boggle extends JFrame{
 	static char [][] map = dice.getDice(); 
 	static JLabel[][] showMap = new JLabel [map.length][map[0].length]; 
 	static int counter = 0; 
-	static ArrayList<String> path = new ArrayList<String>(); 
 	static ArrayList<String> wordsAI = new ArrayList<String>(); 
 	static boolean player1; 
 	static int player = 1; 
 	static boolean played = false; 
 	static int wordGuessedValid = 0; 
+	
+	public static int[] row = { -1, -1, -1, 0, 1, 0, 1, 1 };
+	public static int[] col = { -1, 1, 0, -1, -1, 1, 0, 1 };
+	public static int intStartR = 0;
+	public static int intStartC = 0;
+	public static boolean pathFound;
+	public static ArrayList<int[]> coordinates = new ArrayList<>();
 	
 	//INSTRUCTION PANEL COMPONENTS 
 	JPanel panInstruction = new JPanel();
@@ -65,7 +72,9 @@ public class Boggle extends JFrame{
 	static JLabel scoreLabel3 = new JLabel("0"); 
 	JLabel winnerLabel = new JLabel(); 
 	JButton homeBtn = new JButton("Back to homepage"); 
+	static JLabel timerLabel = new JLabel("This should be a timer"); 
 	
+	//CUSTOMISATION PANEL
 	JPanel panCustomisation = new JPanel(new GridLayout(9, 2)); 
 	
 	JLabel customisationLabel0 = new JLabel("CUSTOMISATION"); 
@@ -142,6 +151,7 @@ public class Boggle extends JFrame{
 		panScore.add(scoreLabel1); 
 		panScore.add(scoreLabel2); 
 		panScore.add(scoreLabel3); 
+		panTimer.add(timerLabel);
 		
 		panScore.setVisible(false); 
 		panBoggle.setVisible(false);
@@ -219,16 +229,16 @@ public class Boggle extends JFrame{
 				{
 					pauseMenu.add(pauseOp); 
 				}
-				allowPause = true;			
+				allowPause = true;
 			}
-			
 		});
 		
 		noBtn.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) {
 				allowPause = false; 
-				pauseMenu.remove(pauseOp); 			}
+				pauseMenu.remove(pauseOp);
+			}
 			
 		});
 		
@@ -265,9 +275,9 @@ public class Boggle extends JFrame{
 				
 				add(panStart); 
 				panStart.setVisible(true);
-				validate(); 
+				validate();  
 				
-				timer.stopTimer();			
+				timerChangePlayer.stopTimer();	 		
 			}
 			
 		});
@@ -294,7 +304,7 @@ public class Boggle extends JFrame{
 				panStart.setVisible(true);
 				validate(); 
 				
-				timer.stopTimer();			
+				timerChangePlayer.stopTimer();			
 			}
 			
 		});
@@ -329,11 +339,11 @@ public class Boggle extends JFrame{
 				repaint(); 
 				revalidate(); 
 				
-				add(panGuess, BorderLayout.NORTH); 
-				panGuess.setVisible(true); 
+				//stop the timer 
+				countdown.stop();
 				
-				add(panBoggle, BorderLayout.CENTER); 
-				panBoggle.setVisible(true); 
+				add(panPause); 
+				panPause.setVisible(true); 
 			}
 			
 		}); 
@@ -347,11 +357,13 @@ public class Boggle extends JFrame{
 				
 				add(panGuess, BorderLayout.NORTH); 
 				panGuess.setVisible(true); 
-				
-				add(panBoggle, BorderLayout.CENTER); 
-				panBoggle.setVisible(true); 			
-				}
-			
+				add(panTimer); 
+				panTimer.setVisible(true);
+				add(panScore, BorderLayout.CENTER);
+				panScore.setVisible(true); 
+				add(panBoggle, BorderLayout.SOUTH); 
+				panBoggle.setVisible(true);
+			}
 		});
 		
 		resumeBtn.addActionListener(new ActionListener()
@@ -363,9 +375,12 @@ public class Boggle extends JFrame{
 				
 				add(panGuess, BorderLayout.NORTH); 
 				panGuess.setVisible(true); 
-				
-				add(panBoggle, BorderLayout.CENTER); 
-				panBoggle.setVisible(true); 
+				add(panTimer); 
+				panTimer.setVisible(true);
+				add(panScore, BorderLayout.CENTER);
+				panScore.setVisible(true); 
+				add(panBoggle, BorderLayout.SOUTH); 
+				panBoggle.setVisible(true);
 			}
 			
 		});
@@ -388,13 +403,15 @@ public class Boggle extends JFrame{
 				randomizeBoggle(); 
 				
 				changeColor(false); 
+				add(panTimer); 
+				panTimer.setVisible(true); 
 				add(panBoggle, BorderLayout.SOUTH); 
 				add(panScore, BorderLayout.CENTER);
-				add(new countdownTimerShow()); 
+				startTimer(); 
 				panScore.setVisible(true);
 				panBoggle.setVisible(true); 
 				
-				timer.startTimer(); 
+				timerChangePlayer.change();  
 				
 				if (counter == 2)
 				{
@@ -408,13 +425,19 @@ public class Boggle extends JFrame{
 		{
 			public void actionPerformed(ActionEvent e) {
 				//String scoreString; 
+				
+				System.out.println(); 
 				String guess = guessIn.getText(); 
-				System.out.println(player); 
+				System.out.println("The player is "+ player); 
 				changeColor(false); //turn the previous cell back to white 
 				
-				if (GetAllWords.checkWordOnBoard(guess, map))
+				if (findWord(guess, map))
 				{
 					System.out.println("Valid answer"); 
+					for (int i =0; i<coordinates.size(); i++)
+					{
+						System.out.println(coordinates.get(i)[0] + coordinates.get(i)[1]); 
+					}
 					if (player ==1)
 					{
 						score1 = score1 + score(guess); 
@@ -429,6 +452,7 @@ public class Boggle extends JFrame{
 						//scoreLabel1.setText("I am dead"); 
 						
 					}
+					changeColor(true); 
 				}
 				else 
 				{
@@ -489,6 +513,46 @@ public class Boggle extends JFrame{
 		setVisible(true); 
 	}
 	
+	class timerChangePlayer {
+		Timer timer;
+
+		public void change() {
+			timer = new Timer(500, new ActionListener() {
+
+				public void actionPerformed(ActionEvent e) {
+					int score;
+					if (player == 1) {
+						player = 2;
+					} else {
+						player = 1;
+						if (playerAI) {
+							// Let ai guess work first
+							wordsAI = aiGuess();
+							changeColor(true);
+
+							for (int i = 0; i < wordsAI.size(); i++) {
+								score2 = score2 + score(wordsAI.get(i));
+								if (i == 0) {
+									computerLabel1.setText(wordsAI.get(i));
+								} else {
+									computerLabel1.setText(computerLabel1.getText() + ", " + wordsAI.get(i));
+								}
+							}
+							scoreLabel3.setText(Integer.toString(score2));
+						}
+					}
+				}
+			});
+		}
+
+		public void stopTimer() {
+			if (timer.isRunning()) {
+				timer.stop();
+			}
+		}
+	}
+	timerChangePlayer timerChangePlayer = new timerChangePlayer();
+	
 	public static void initialisePanBoggle()
 	{
 		for (int i =0; i<map.length; i++) {
@@ -500,31 +564,36 @@ public class Boggle extends JFrame{
 				showMap[i][j].setOpaque(true);
 			}
 		}
-		
+	}
+	
+	public static void main (String args[])
+	{
 		Boggle frame1 = new Boggle(); //start gui
 	}
 	
-	public static void changeColor (boolean showFinal)
-	{
+	public static void changeColor(boolean showFinal) {
 		System.out.println("Change color invoked");
+
+		for (int i = 0; i < coordinates.size(); i++) {
+			// System.out.println("export path");
+			System.out.println(coordinates.get(i)[0]);
+			System.out.println(coordinates.get(i)[1]);
+		}
 		
-		if (path.size() !=0)
-		{
-			for (int i =0; i<path.size(); i++) //for loop 
+		if (coordinates.size() != 0) {
+			System.out.print("path size does not equal to zero");
+			for (int i = 0; i < coordinates.size(); i++) // for loop
 			{
-				String rowCol = path.get(i); //get x y coordinate 
-				int row = Integer.parseInt(""+rowCol.charAt(0)); //get y coordinate 
-				int col = Integer.parseInt(""+rowCol.charAt(1)); //get x coordinate 
-				
-				if (showFinal)
-				{
-					System.out.println(" colorToOrange invoked"); 
-					showMap[row][col].setBackground(Color.ORANGE); 
-				}
-				else 
-				{
-					System.out.println(" colorToWhite invoked"); 
-					showMap[row][col].setBackground(Color.WHITE); 
+				//String rowCol = path.get(i); // get x y coordinate
+				int row = coordinates.get(i)[0]; // get y coordinate
+				int col =  coordinates.get(i)[1]; // get x coordinate
+
+				if (showFinal) {
+					System.out.println(" colorToOrange invoked");
+					showMap[row][col].setBackground(Color.ORANGE);
+				} else {
+					System.out.println(" colorToWhite invoked");
+					showMap[row][col].setBackground(Color.WHITE);
 					showMap[row][col].setOpaque(true);
 				}
 			}
@@ -557,10 +626,9 @@ public class Boggle extends JFrame{
 		}
 		
 		int difficulty = 5; // 1, 2, 3, 4, or 5
-		GetAllWords gaw = new GetAllWords();
 		
 		int wordsToGuess = difficulty+2;
-		ArrayList<String> words = gaw.getWords(board, wordsToGuess);
+		ArrayList<String> words = getWords(board, wordsToGuess);
 		
 		return words; 
 	}
@@ -585,79 +653,220 @@ public class Boggle extends JFrame{
 		return score;
 	}
 	
-	class timer extends JPanel
-	{
-		private static LocalDateTime startTime; 
-	    private static JLabel label; 
-	    protected static javax.swing.Timer countdown;
+	public static boolean isSafe(int x, int y, boolean[][] processed, char[][] board, String word, String path) {
+		boolean isSafe = false;
+		if ((x >= 0 && x < processed.length) && (y >= 0 && y < processed[0].length) && !processed[x][y]) {
+			if (word.charAt(path.length()) == board[x][y]) {
+				isSafe = true;
+			} else {
+				isSafe = false;
+			}
+		}
+		return isSafe;
+	}
 
-	    private static Duration duration = Duration.ofSeconds(15);
-		
-		public static void startTimer()
-		{
-			JPanel pan = new JPanel(); 
-			pan.add(label); 
-			countdown = new Timer(500, new ActionListener() {
-				public void actionPerformed(ActionEvent e)
-				{
-					//LocalDateTime startTime; 
-					LocalDateTime now = LocalDateTime.now(); 
-					Duration runningTime = Duration.between(startTime, now);
-	                Duration timeLeft = duration.minus(runningTime);
-	                if (timeLeft.isZero() || timeLeft.isNegative()) {
-	                    timeLeft = Duration.ZERO;
-	                   countdown.start(); 
-	                   if (player == 1)
-						{
-							player = 2; 
-						}
-						else 
-						{
-							player = 1; 
-							if (playerAI)
-							{
-								//Let ai guess work first 
-								wordsAI = aiGuess(); 
-								changeColor(true); 
-								
-								for (int i =0; i<wordsAI.size(); i++)
-								{
-									score2 = score2 + score(wordsAI.get(i)); 
-									if (i==0)
-									{
-										computerLabel1.setText(wordsAI.get(i));
-									}
-									else
-									{
-										computerLabel1.setText(computerLabel1.getText()+", "+wordsAI.get(i)); 
-									}
-								}
-								scoreLabel3.setText(Integer.toString(score2)); 
-							}
-						}
-	                }
-	                
-	                label.setText(format(timeLeft));
-				}
-				
-	        }); 
+	// A recursive function to generate and print all possible words in a boggle
+	public static void searchBoggle(char[][] board, String word, ArrayList<String> result, boolean[][] processed, int i,
+			int j, String path) {
+		// Mark the current node as processed
+		processed[i][j] = true;
+		int[] point = new int[2];
+		int count = -1;
+
+		// Update the path with the current character and insert it into the set
+		path += board[i][j];
+		count++;
+		point[0] = i;
+		point[1] = j;
+
+		if (!pathFound) {
+			coordinates.add(point);
 		}
-		
-		protected static String format (Duration duration)
-		{
-			long seconds = duration.toMillis()/10000; 
-			return String.format("%02ds",seconds); 
-			
+
+		// Check whether the path is present in the input set
+		if (word.equals(path)) {
+			pathFound = true;
+			result.add(path);
+			return;
 		}
-		
-		protected static void stopTimer()
-		{
-			if(countdown.isRunning())
-			{
-				countdown.stop(); 
+		// Check for all eight possible movements from the current cell
+		for (int k = 0; k < row.length; k++) {
+			if (isSafe(i + row[k], j + col[k], processed, board, word, path)) {
+				searchBoggle(board, word, result, processed, i + row[k], j + col[k], path);
+			}
+		}
+		// Mark the current node as unprocessed
+		processed[i][j] = false;
+		int index = coordinates.indexOf(point);
+
+		for (int k = coordinates.size() - 1; k >= index; k--) {
+			if (!pathFound) {
+				coordinates.remove(k);
 			}
 		}
 	}
+
+	public static ArrayList<String> searchBoggle(char[][] board, String word) {
+		ArrayList<String> result = new ArrayList<>();
+
+		if (board.length == 0) {
+			return result;
+		}
+
+		boolean[][] processed = new boolean[board.length][board[0].length];
+
+		searchBoggle(board, word, result, processed, intStartR, intStartC, "");
+		if (result.size() > 0) {
+			return result;
+		}
+
+		return result;
+	}
+
+	public static ArrayList<String> getWords(char[][] board, int limit) {
+		Map<String, ArrayList<String>> mapDic = new HashMap<String, ArrayList<String>>();
+		ArrayList<String> dicWords = new ArrayList<String>();
+
+		// Put dictionary into Map
+		File fileDictionary = new File("dictionary.txt");
+		try {
+			Scanner inputDic = new Scanner(fileDictionary);
+			while (inputDic.hasNext()) {
+				String strNext = inputDic.next().toUpperCase();
+				if (strNext.length() > 2) {
+					String strFirstLetter = strNext.substring(0, 1);
+					if (mapDic.get(strFirstLetter) != null) {
+						mapDic.get(strFirstLetter).add(strNext);
+					} else {
+						ArrayList<String> arrTemp = new ArrayList<String>();
+						arrTemp.add(strNext);
+						mapDic.put(strFirstLetter, arrTemp);
+					}
+				}
+			}
+			inputDic.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				intStartR = i;
+				intStartC = j;
+				ArrayList<String> arrWordList = mapDic.get(Character.toString(board[i][j]));
+
+				for (int k = 0; k < arrWordList.size(); k++) {
+					ArrayList<String> arrWords = new ArrayList<String>();
+					String words = arrWordList.get(k);
+
+					for (int l = 0; l < words.length(); l++) {
+						arrWords.add(Character.toString(words.charAt(l)));
+					}
+
+					ArrayList<String> validWords = searchBoggle(board, words);
+
+					if (!validWords.isEmpty()) {
+						if (!(dicWords.contains(validWords.get(0).toString()))) {
+							dicWords.add(validWords.get(0).toString());
+							if (dicWords.size()>=limit)
+							{
+								return dicWords;
+							}
+							
+						}
+					}
+				}
+			}
+		}
+		return dicWords;
+	}
+	
+	public static boolean findWord(String word, char[][] board) {
+		ArrayList<String> arrWords = new ArrayList<>();
+
+		for (int i = 0; i < word.length(); i++) {
+			arrWords.add(Character.toString(word.charAt(i)));
+		}
+		
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[0].length; j++) {
+				if (board[i][j] == word.charAt(0)) {
+					intStartR = i;
+					intStartC = j;
+					ArrayList<String> validWords = searchBoggle(board, word);
+					if (validWords.indexOf(word) > -1) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	private static LocalDateTime startTime; 
+    protected static Timer countdown;
+    private static Duration duration = Duration.ofSeconds(15);
+	
+	public static JLabel startTimer()
+	{
+		countdown = new Timer(500, new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				//LocalDateTime startTime; 
+				LocalDateTime now = LocalDateTime.now(); 
+				Duration runningTime = Duration.between(startTime, now);
+                Duration timeLeft = duration.minus(runningTime);
+                if (timeLeft.isZero() || timeLeft.isNegative()) {
+                    timeLeft = Duration.ZERO;
+                   if (player == 1)
+					{
+						player = 2; 
+					}
+					else 
+					{
+						player = 1; 
+						if (playerAI)
+						{
+							//Let ai guess work first 
+							wordsAI = aiGuess(); 
+							changeColor(true); 
+							
+							for (int i =0; i<wordsAI.size(); i++)
+							{
+								score2 = score2 + score(wordsAI.get(i)); 
+								if (i==0)
+								{
+									computerLabel1.setText(wordsAI.get(i));
+								}
+								else
+								{
+									computerLabel1.setText(computerLabel1.getText()+", "+wordsAI.get(i)); 
+								}
+							}
+							scoreLabel3.setText(Integer.toString(score2)); 
+						}
+					}
+                }
+                countdown.start(); 
+                timerLabel.setText(format(timeLeft));
+			}
+			
+        }); 
+		return timerLabel; 
+	}
+	
+	protected static String format (Duration duration)
+	{
+		long seconds = duration.toMillis()/10000; 
+		return String.format("%02ds",seconds); 
+		
+	}
+	
+	protected static void stopTimer()
+	{
+		if(countdown.isRunning())
+		{
+			countdown.stop(); 
+		}
+	}
 }
-
-
