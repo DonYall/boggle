@@ -458,7 +458,7 @@ public class BoggleGUI3 extends JFrame {
 				System.out.println(player);
 				changeColor(false); // turn the previous cell back to white
 
-				if (checkWordOnBoard(guess, map)) {
+				if (findWord(guess, map)) {
 					System.out.println("Valid answer");
 					for (int i =0; i<coordinates.size(); i++)
 					{
@@ -587,7 +587,6 @@ public class BoggleGUI3 extends JFrame {
 		}
 		return score;
 	}
-
 	public static boolean isSafe(int x, int y, boolean[][] processed, char[][] board, String word, String path) {
 		boolean isSafe = false;
 		if ((x >= 0 && x < processed.length) && (y >= 0 && y < processed[0].length) && !processed[x][y]) {
@@ -620,10 +619,10 @@ public class BoggleGUI3 extends JFrame {
 
 		// Check whether the path is present in the input set
 		if (word.equals(path)) {
+			pathFound = true;
 			result.add(path);
 			return;
 		}
-
 		// Check for all eight possible movements from the current cell
 		for (int k = 0; k < row.length; k++) {
 			if (isSafe(i + row[k], j + col[k], processed, board, word, path)) {
@@ -667,7 +666,7 @@ public class BoggleGUI3 extends JFrame {
 		try {
 			Scanner inputDic = new Scanner(fileDictionary);
 			while (inputDic.hasNext()) {
-				String strNext = inputDic.next();
+				String strNext = inputDic.next().toUpperCase();
 				if (strNext.length() > 2) {
 					String strFirstLetter = strNext.substring(0, 1);
 					if (mapDic.get(strFirstLetter) != null) {
@@ -703,8 +702,11 @@ public class BoggleGUI3 extends JFrame {
 					if (!validWords.isEmpty()) {
 						if (!(dicWords.contains(validWords.get(0).toString()))) {
 							dicWords.add(validWords.get(0).toString());
-							if (dicWords.size() >= limit)
+							if (dicWords.size()>=limit)
+							{
 								return dicWords;
+							}
+							
 						}
 					}
 				}
@@ -713,7 +715,7 @@ public class BoggleGUI3 extends JFrame {
 		return dicWords;
 	}
 
-	public static boolean checkWordOnBoard(String word, char[][] board) {
+	public static boolean findWord(String word, char[][] board) {
 		ArrayList<String> arrWords = new ArrayList<>();
 
 		for (int i = 0; i < word.length(); i++) {
@@ -735,15 +737,6 @@ public class BoggleGUI3 extends JFrame {
 		return false;
 	}
 
-	/*
-	 * public static void updatePath() { for (int i =0; i<coordinates.size(); i++) {
-	 * System.out.println(coordinates.get(i)[0] + coordinates.get(i)[1]); }
-	 * ArrayList<String> path = new ArrayList<String>(); for (int i = 0; i <
-	 * coordinates.size(); i++) { path.add(Integer.toString(coordinates.get(i)[0]) +
-	 * Integer.toString(coordinates.get(i)[1])); }
-	 * 
-	 * }
-	 */
 }
 
 class countdownTimerShow extends JPanel {
