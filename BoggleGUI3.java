@@ -526,7 +526,7 @@ public class BoggleGUI3 extends JFrame {
 			System.out.print("path size does not equal to zero");
 			for (int i = 0; i < coordinates.size(); i++) // for loop
 			{
-				//String rowCol = path.get(i); // get x y coordinate
+				//String rowCol = coordinates.get(i); // get x y coordinate
 				int row = coordinates.get(i)[0]; // get y coordinate
 				int col =  coordinates.get(i)[1]; // get x coordinate
 
