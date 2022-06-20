@@ -2,13 +2,14 @@ package BoggleGame;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 import java.util.Timer;
+
+import javax.sound.sampled.*;
 import javax.swing.*;
 
-//I HAVE 1 BUG AND IDK HOW TO SOLVE 
+//Added the customisation of difficulty  
 
 public class Boggle2 extends JFrame {
 	// declare static variables
@@ -34,6 +35,7 @@ public class Boggle2 extends JFrame {
 	public static boolean pathFound;
 	public static ArrayList<int[]> coordinates = new ArrayList<>();
 	public static ArrayList<int[]> aiCoordinates = new ArrayList<>();
+	public static int difficulty; 
 
 	private GameTimer t; // create the game timer (a count down timer)
 
@@ -72,7 +74,7 @@ public class Boggle2 extends JFrame {
 	JPanel panTimer = new JPanel(new FlowLayout());
 	JPanel panError = new JPanel(new FlowLayout());
 	JLabel guessLabel = new JLabel("What is your answer? ");
-	JTextField guessIn = new JTextField("Please enter your answer here");
+	JTextField guessIn = new JTextField("Please enter your answer here", 20);
 	JButton guessBtn = new JButton("Enter");
 	JLabel computerLabel0 = new JLabel("The answer from computer is... ");
 	static JLabel computerLabel1 = new JLabel("still thinking... ");
@@ -91,16 +93,16 @@ public class Boggle2 extends JFrame {
 	JLabel playersMode = new JLabel("Which mdoe would you like to choose? ");
 	JButton singlePlayerBtn = new JButton("Single Player");
 	JButton twoPlayerBtn = new JButton("Two Player");
-	JLabel whoStartLabel = new JLabel("Who wants to start first? If you chose single player mode, ");
-	JButton player1Btn = new JButton("Player1");
-	JButton player2Btn = new JButton("Player2");
+	JLabel difficultyLabel = new JLabel("Choose the difficulty for the bot. Please enter 1-5. ");
+	JTextField difficultyIn = new JTextField("Please enter 1-5");
+	JButton difficultyBtn = new JButton("Enter");
 	JLabel allowPauseLabel = new JLabel("Will this game allow pausing? ");
 	JButton yesBtn = new JButton("Yes");
 	JButton noBtn = new JButton("No");
 	JTextField ptIn = new JTextField("Enter points to play");
 	JLabel targetScore = new JLabel("Tournament scroe? Please enter an integer. ");
 	JButton ptBtn = new JButton("Enter");
-
+	
 	// MENU BAR
 	JMenuBar menuBar = new JMenuBar();
 	// menu
@@ -184,10 +186,10 @@ public class Boggle2 extends JFrame {
 		panCustomisation.add(new JLabel(""));
 		panCustomisation.add(singlePlayerBtn);
 		panCustomisation.add(twoPlayerBtn);
-		panCustomisation.add(whoStartLabel);
-		panCustomisation.add(new JLabel(" you are player1 while the AI is player2"));
-		panCustomisation.add(player1Btn);
-		panCustomisation.add(player2Btn);
+		//panCustomisation.add(whoStartLabel);
+		//panCustomisation.add(new JLabel(" you are player1 while the AI is player2"));
+		//panCustomisation.add(player1Btn);
+		//panCustomisation.add(player2Btn);
 		panCustomisation.add(allowPauseLabel);
 		panCustomisation.add(new JLabel(""));
 		panCustomisation.add(yesBtn);
@@ -240,6 +242,14 @@ public class Boggle2 extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				playerAI = true;
 				System.out.println("singlePlayerBtn pressed,  playerAI to true");
+				
+				if (!difficultyLabel.isShowing())
+				{
+					panCustomisation.add(difficultyLabel);
+					panCustomisation.add(difficultyIn);
+					panCustomisation.add(difficultyBtn);
+				}
+				
 			}
 		});
 
@@ -247,21 +257,24 @@ public class Boggle2 extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				playerAI = false;
 				System.out.println("twoPlayerBtn pressed, playerAI to false");
+				if (difficultyLabel.isShowing())
+				{
+					panCustomisation.remove(difficultyLabel);
+					panCustomisation.remove(difficultyIn);
+					panCustomisation.remove(difficultyBtn);
+				}
 			}
 
 		});
 
-		/*
-		 * player1Btn.addActionListener(new ActionListener() { public void
-		 * actionPerformed(ActionEvent e) { player = 1; }
-		 * 
-		 * });
-		 * 
-		 * player2Btn.addActionListener(new ActionListener() { public void
-		 * actionPerformed(ActionEvent e) { player = 2; }
-		 * 
-		 * });
-		 */
+		
+		  difficultyBtn.addActionListener(new ActionListener() { 
+			public void actionPerformed(ActionEvent e) {
+				difficulty = Integer.parseInt(guessIn.getText()); 
+			}
+			  
+		  });
+		 
 
 		yesBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -434,7 +447,16 @@ public class Boggle2 extends JFrame {
 			}
 		});
 	}
-
+	
+	/*
+	 * public static synchronized void playSound(final String url) { new Thread(new
+	 * Runnable() { // The wrapper thread is unnecessary, unless it blocks on the //
+	 * Clip finishing; see comments. public void run() { try { File sound = new
+	 * File(File.mp3); Clip clip = AudioSystem.getClip(); AudioInputStream
+	 * inputStream = AudioSystem.getAudioInputStream(sound); clip.open(inputStream);
+	 * clip.start(); } catch (Exception e) { System.err.println(e.getMessage()); } }
+	 * }).start(); }
+	 */
 	ActionListener resumeAction = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("resume invoked");
@@ -557,8 +579,6 @@ public class Boggle2 extends JFrame {
 			}
 			System.out.println();
 		}
-
-		int difficulty = 5; // 1, 2, 3, 4, or 5
 
 		int wordsToGuess = difficulty + 2;
 		ArrayList<String> words = getWords(map, wordsToGuess);
@@ -776,24 +796,6 @@ public class Boggle2 extends JFrame {
 							wordsAI.clear();
 							aiCoordinates.clear();
 							wordsAI = aiGuess();
-							
-//							for (int i = 0; i < wordsAI.size(); i++) {
-//								//ArrayList<String> word = searchBoggle(map, wordsAI.get(i));
-//								//searchBoggle(map, wordsAI.get(i)); 
-//								findWord(wordsAI.get(i), map); 
-//								System.out.println("Add points to aiCoordinates, printing current coordinates");
-//								
-//								for (int j = 0; j < coordinates.size(); j++) {
-//									point[0] = coordinates.get(j)[0];
-//									point[1] = coordinates.get(j)[1];
-//
-//									System.out.println(coordinates.get(j)[0] + "" + coordinates.get(j)[1]);
-//
-//									aiCoordinates.add(point);
-//								}
-//							}
-//							
-//							changeColor(aiCoordinates, true);
 							
 							for (int i =0; i<wordsAI.size(); i++)
 							{
