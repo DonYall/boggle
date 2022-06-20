@@ -123,8 +123,8 @@ public class Boggle2 extends JFrame {
 	public Boggle2() { // constructor
 		setTitle("boggle game");// set frame title
 		setSize(750, 680);// set frame size
-		setVisible(true); 
-		
+		setVisible(true);
+
 		// INSTRUCTION PANEL
 		panInstruction.add(instructionLabel0);
 		panInstruction.add(instructionLabel1);
@@ -251,19 +251,17 @@ public class Boggle2 extends JFrame {
 
 		});
 
-		player1Btn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				player = 1;
-			}
-
-		});
-
-		player1Btn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				player = 1;
-			}
-
-		});
+		/*
+		 * player1Btn.addActionListener(new ActionListener() { public void
+		 * actionPerformed(ActionEvent e) { player = 1; }
+		 * 
+		 * });
+		 * 
+		 * player2Btn.addActionListener(new ActionListener() { public void
+		 * actionPerformed(ActionEvent e) { player = 2; }
+		 * 
+		 * });
+		 */
 
 		yesBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -349,6 +347,7 @@ public class Boggle2 extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("playPressed");
 				t.setTime();
+				t.reset(); 
 				played = true;
 
 				menu.remove(customisation);
@@ -374,8 +373,12 @@ public class Boggle2 extends JFrame {
 				panScore.setVisible(true);
 				panBoggle.setVisible(true);
 				panError.setVisible(true);
-
-				if (counter == 2) {
+				
+				player =(int)( Math.random()*2)+1; 
+				
+				errorLabel.setText("Player " + player + " goes first");
+				
+				if (counter == 4) {
 					menu.add(shakeUp);
 				}
 			}
@@ -474,7 +477,7 @@ public class Boggle2 extends JFrame {
 			score2 = 0;
 			scoreLabel1.setText("0");
 			scoreLabel3.setText("0");
-
+			
 			if (played) {
 				changeColor(coordinates, false);
 				played = false;
@@ -483,8 +486,7 @@ public class Boggle2 extends JFrame {
 			add(panStart);
 			panStart.setVisible(true);
 			validate();
-
-			t.reset();
+			t.pause(); 
 		}
 
 	};
@@ -755,9 +757,10 @@ public class Boggle2 extends JFrame {
 				long playingTime = System.currentTimeMillis() - startTime;
 				long timeLeft = 15000 - playingTime;
 				long sec = (timeLeft) / 1000L;
-				
+
 				if (timeLeft < 0) // 15 seconds passed
 				{
+					counter ++; 
 					if (player == 1) {
 						player = 2;
 						System.out.println();
@@ -773,23 +776,31 @@ public class Boggle2 extends JFrame {
 							wordsAI.clear();
 							aiCoordinates.clear();
 							wordsAI = aiGuess();
-
-							for (int i = 0; i < wordsAI.size(); i++) {
-								findWord(wordsAI.get(i), map);
-								System.out.println("Add points to aiCoordinates, printing cuurent coordinates");
-								for (int j = 0; j < coordinates.size(); j++) {
-									point[0] = coordinates.get(j)[0];
-									point[1] = coordinates.get(j)[1];
-
-									System.out.println(coordinates.get(j)[0] + "" + coordinates.get(j)[1]);
-
-									aiCoordinates.add(point);
-								}
-
+							
+//							for (int i = 0; i < wordsAI.size(); i++) {
+//								//ArrayList<String> word = searchBoggle(map, wordsAI.get(i));
+//								//searchBoggle(map, wordsAI.get(i)); 
+//								findWord(wordsAI.get(i), map); 
+//								System.out.println("Add points to aiCoordinates, printing current coordinates");
+//								
+//								for (int j = 0; j < coordinates.size(); j++) {
+//									point[0] = coordinates.get(j)[0];
+//									point[1] = coordinates.get(j)[1];
+//
+//									System.out.println(coordinates.get(j)[0] + "" + coordinates.get(j)[1]);
+//
+//									aiCoordinates.add(point);
+//								}
+//							}
+//							
+//							changeColor(aiCoordinates, true);
+							
+							for (int i =0; i<wordsAI.size(); i++)
+							{
+								findWord(wordsAI.get(i), map); 
+								//searchBoggle(map, wordsAI.get(i)); 
+								changeColor(coordinates, true); 
 							}
-
-							changeColor(aiCoordinates, true);
-
 							for (int i = 0; i < wordsAI.size(); i++) {
 								score2 = score2 + score(wordsAI.get(i));
 								if (i == 0) {
