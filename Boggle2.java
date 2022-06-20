@@ -862,4 +862,4 @@ public class Boggle2 extends JFrame {
 			}
 		}
 	}
-}
+} 
