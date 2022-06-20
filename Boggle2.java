@@ -53,6 +53,11 @@ public class Boggle2 extends JFrame {
 			"The longer the word, the higher the point value of the word, according to Boggle rules.");
 	JLabel instructionLabel10 = new JLabel("However, the word must have at least 3 characters. ");
 
+	// GAME OVER PANEL
+	JPanel panOver = new JPanel(new FlowLayout());
+	JLabel winnerLabel = new JLabel();
+	JButton closeBtn = new JButton("Quit application");
+
 	// PAUSE PANEL
 	JPanel panPause = new JPanel();
 	JLabel pauseLabel = new JLabel("Game paused");
@@ -75,7 +80,6 @@ public class Boggle2 extends JFrame {
 	JLabel scoreLabel1 = new JLabel("0");
 	JLabel scoreLabel2 = new JLabel("          Current score of player 2:");
 	static JLabel scoreLabel3 = new JLabel("0");
-	JLabel winnerLabel = new JLabel();
 	JButton homeBtn = new JButton("Back to homepage");
 	JLabel timerLabel = new JLabel("Timer: 00:15");
 	JLabel errorLabel = new JLabel();
@@ -119,7 +123,8 @@ public class Boggle2 extends JFrame {
 	public Boggle2() { // constructor
 		setTitle("boggle game");// set frame title
 		setSize(750, 680);// set frame size
-
+		setVisible(true); 
+		
 		// INSTRUCTION PANEL
 		panInstruction.add(instructionLabel0);
 		panInstruction.add(instructionLabel1);
@@ -143,6 +148,12 @@ public class Boggle2 extends JFrame {
 		panPause.add(resumeBtn);
 		// set visible to false
 		panPause.setVisible(false);
+
+		// GAME OVER PANEL
+		panOver.add(winnerLabel, BorderLayout.NORTH);
+		panOver.add(homeBtn, BorderLayout.CENTER);
+		panOver.add(closeBtn, BorderLayout.SOUTH);
+		panOver.setVisible(false);
 
 		// PLAY PANEL
 		panScore.setPreferredSize(new Dimension(3, 550));
@@ -209,7 +220,13 @@ public class Boggle2 extends JFrame {
 		add(panStart, BorderLayout.NORTH);
 		setVisible(true);
 
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		t = new GameTimer();
+
+		closeBtn.addActionListener(e -> {
+			dispose();
+		});
 
 		ptBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -410,26 +427,6 @@ public class Boggle2 extends JFrame {
 					}
 				}
 
-				if (score1 == goal || score2 == goal) {
-					getContentPane().removeAll();
-					repaint();
-					revalidate();
-
-					if (score1 == goal) {
-						winnerLabel.setText("Player 1 won! ");
-						add(winnerLabel, BorderLayout.CENTER);
-					} else {
-						if (playerAI) {
-							winnerLabel.setText("The AI won! ");
-							add(winnerLabel, BorderLayout.CENTER);
-						} else {
-							winnerLabel.setText("Player 2 won! ");
-							add(winnerLabel, BorderLayout.CENTER);
-						}
-					}
-
-					add(homeBtn, BorderLayout.SOUTH);
-				}
 				wordGuessedValid.add(guess);
 			}
 		});
@@ -758,7 +755,7 @@ public class Boggle2 extends JFrame {
 				long playingTime = System.currentTimeMillis() - startTime;
 				long timeLeft = 15000 - playingTime;
 				long sec = (timeLeft) / 1000L;
-
+				
 				if (timeLeft < 0) // 15 seconds passed
 				{
 					if (player == 1) {
@@ -839,6 +836,26 @@ public class Boggle2 extends JFrame {
 				else
 					s += "0" + Integer.toString((int) sec);
 
+				if (score1 >= goal || score2 >= goal) {
+					pause();
+
+					getContentPane().removeAll();
+					repaint();
+					revalidate();
+
+					if (score1 == goal) {
+						winnerLabel.setText("Player 1 won! ");
+					} else {
+						if (playerAI) {
+							winnerLabel.setText("The AI won! ");
+						} else {
+							winnerLabel.setText("Player 2 won! ");
+						}
+					}
+					add(panOver);
+					panOver.setVisible(true);
+				}
+
 				timerLabel.setText(s);
 			}
 		}
@@ -862,4 +879,4 @@ public class Boggle2 extends JFrame {
 			}
 		}
 	}
-} 
+}
