@@ -57,6 +57,11 @@ public class Boggle2 extends JFrame {
     JLabel instructionLabel9 = new JLabel(
             "The longer the word, the higher the point value of the word, according to Boggle rules.");
     JLabel instructionLabel10 = new JLabel("However, the word must have at least 3 characters. ");
+    JLabel instructionLabel11 = new JLabel("Noted that if you choose single player mode, you will always be the person who goes first. "); 
+	JLabel instructionLabel12 = new JLabel("************************************************** The scoring rules:**************************************************");
+	JLabel instructionLabel13 = new JLabel("                  Word Length | 3  | 4  | 5  | 6  | 7  | 8 or more                  "); 
+	JLabel instructionLabel14 = new JLabel("--------------------------------------------------"); 
+	JLabel instructionLabel15 = new JLabel("                  Score       | 1  | 1  | 2  | 3  | 5  | 11                         "); 
 
     // GAME OVER PANEL
     JPanel panOver = new JPanel(new FlowLayout());
@@ -134,7 +139,7 @@ public class Boggle2 extends JFrame {
     // HOME PAGE PANEL
     JPanel panStart = new JPanel();
     JButton playBtn = new JButton("Play");
-    JLabel tips = new JLabel("Remember to check the munu for more features and intruction. ");
+    JLabel tips = new JLabel("Remember to check the menu for more features and intruction. ");
 
     public Boggle2() { // constructor
         setTitle("boggle game");// set frame title
@@ -153,6 +158,11 @@ public class Boggle2 extends JFrame {
         panInstruction.add(instructionLabel8);
         panInstruction.add(instructionLabel9);
         panInstruction.add(instructionLabel10);
+        panInstruction.add(instructionLabel11);
+		panInstruction.add(instructionLabel12);
+		panInstruction.add(instructionLabel13);
+		panInstruction.add(instructionLabel14);
+		panInstruction.add(instructionLabel15);
 
         // set visible of panInstruction to true
         panInstruction.setVisible(false);
@@ -200,10 +210,7 @@ public class Boggle2 extends JFrame {
         panCustomisation.add(new JLabel(""));
         panCustomisation.add(singlePlayerBtn);
         panCustomisation.add(twoPlayerBtn);
-        //panCustomisation.add(whoStartLabel);
-        //panCustomisation.add(new JLabel(" you are player1 while the AI is player2"));
-        //panCustomisation.add(player1Btn);
-        //panCustomisation.add(player2Btn);
+
         panCustomisation.add(allowPauseLabel);
         panCustomisation.add(new JLabel(""));
         panCustomisation.add(yesBtn);
@@ -272,6 +279,8 @@ public class Boggle2 extends JFrame {
                     panCustomisation.add(difficultyLabel);
                     panCustomisation.add(difficultyIn);
                     panCustomisation.add(difficultyBtn);
+                    panCustomisation.repaint(); 
+					repaint(); 
                 }
                 
             }
@@ -349,7 +358,7 @@ public class Boggle2 extends JFrame {
         customisation.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("customisation invoked");
-
+                t.pause(); 
                 getContentPane().removeAll();
                 repaint();
                 revalidate();
@@ -474,7 +483,11 @@ public class Boggle2 extends JFrame {
         playBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("playPressed");
-                t.setTime();
+                try {
+					t.setTime();
+				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
+					e1.printStackTrace();
+				}
                 t.reset(); 
                 played = true;
 
@@ -502,7 +515,12 @@ public class Boggle2 extends JFrame {
                 panBoggle.setVisible(true);
                 panError.setVisible(true);
                 
-                player =(int)( Math.random()*2)+1; 
+                if (!playerAI)
+				{
+					player = (int) (Math.random() * 2) + 1;
+				} else {
+					player =1; 
+				} 
                 
                 errorLabel.setText("Player " + player + " goes first");
                 
@@ -562,16 +580,7 @@ public class Boggle2 extends JFrame {
             }
         });
     }
-    
-    /*
-        * public static synchronized void playSound(final String url) { new Thread(new
-        * Runnable() { // The wrapper thread is unnecessary, unless it blocks on the //
-        * Clip finishing; see comments. public void run() { try { File sound = new
-        * File(File.mp3); Clip clip = AudioSystem.getClip(); AudioInputStream
-        * inputStream = AudioSystem.getAudioInputStream(sound); clip.open(inputStream);
-        * clip.start(); } catch (Exception e) { System.err.println(e.getMessage()); } }
-        * }).start(); }
-        */
+
     ActionListener resumeAction = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
             System.out.println("resume invoked");
@@ -658,10 +667,6 @@ public class Boggle2 extends JFrame {
     public static void changeColor(ArrayList<int[]> path, boolean showFinal) {
         System.out.println("Change color invoked");
 
-//		for (int i = 0; i < path.size(); i++) {
-//			System.out.println(path.get(i)[0] + " " + path.get(i)[1]);
-//		}
-
         if (path.size() != 0) {
             System.out.println("path size does not equal to zero");
             for (int i = 0; i < path.size(); i++) // for loop
@@ -682,7 +687,7 @@ public class Boggle2 extends JFrame {
                 }
             }
         } else {
-            System.out.println("path size does equal to zero");
+            System.out.println("path size equal to zero");
         }
     }
 
@@ -896,10 +901,8 @@ public class Boggle2 extends JFrame {
             startTime = System.currentTimeMillis();
         }
 
-        private int[] point = new int[2];
-
         // Update the timer label
-        public void setTime() {
+        public void setTime() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
             if (!paused) {
                 long playingTime = System.currentTimeMillis() - startTime;
                 long timeLeft = 15000 - playingTime;
@@ -924,12 +927,6 @@ public class Boggle2 extends JFrame {
                             aiCoordinates.clear();
                             wordsAI = aiGuess();
                             
-                            for (int i =0; i<wordsAI.size(); i++)
-                            {
-                                findWord(wordsAI.get(i), map); 
-                                //searchBoggle(map, wordsAI.get(i)); 
-                                changeColor(coordinates, true); 
-                            }
                             for (int i = 0; i < wordsAI.size(); i++) {
                                 score2 = score2 + score(wordsAI.get(i));
                                 if (i == 0) {
@@ -993,7 +990,17 @@ public class Boggle2 extends JFrame {
                         }
                     }
                     add(panOver);
-                    panOver.setVisible(true);
+					panOver.setVisible(true);
+					File file = new File("Cheers10.wav"); 
+					AudioInputStream  audioStream = AudioSystem.getAudioInputStream(file); 
+					Clip clip = AudioSystem.getClip(); 
+					
+					clip.open(audioStream); 
+					clip.start(); 
+					clip.loop(Clip.LOOP_CONTINUOUSLY);
+					
+					JOptionPane.showMessageDialog(null, "Hit ok to stop sound effect");
+					clip.stop(); 
                 }
 
                 timerLabel.setText(s);
@@ -1015,7 +1022,11 @@ public class Boggle2 extends JFrame {
 
             public void run() {
                 // Update the timer label
-                setTime();
+                try {
+					setTime();
+				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+					e.printStackTrace();
+				}
             }
         }
     }
