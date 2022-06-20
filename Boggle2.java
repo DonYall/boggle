@@ -187,6 +187,28 @@ public class Boggle2 extends JFrame {
 		panCustomisation.add(ptBtn);
 		panCustomisation.setVisible(false);
 
+		// MENU BAR
+		menuBar.add(menu);
+		menuBar.add(pauseMenu);
+		setJMenuBar(menuBar);
+		// MENU - add menu items
+		menu.add(restart);
+		menu.add(instruction);
+		menu.add(customisation);
+
+		// PAUSE -- add menu items
+		pauseMenu.add(pauseOp);
+		pauseMenu.add(resume);
+
+		// START PANEL
+		GridLayout gl1 = new GridLayout(2, 1);
+		panStart.setLayout(gl1);
+		panStart.setPreferredSize(new Dimension(650, 50));
+		panStart.add(playBtn);
+		panStart.add(tips);
+		add(panStart, BorderLayout.NORTH);
+		setVisible(true);
+
 		t = new GameTimer();
 
 		ptBtn.addActionListener(new ActionListener() {
@@ -411,29 +433,6 @@ public class Boggle2 extends JFrame {
 				wordGuessedValid.add(guess);
 			}
 		});
-
-		// MENU BAR
-		menuBar.add(menu);
-		menuBar.add(pauseMenu);
-		setJMenuBar(menuBar);
-		// MENU - add menu items
-		menu.add(restart);
-		menu.add(instruction);
-		menu.add(customisation);
-
-		// PAUSE -- add menu items
-		pauseMenu.add(pauseOp);
-		pauseMenu.add(resume);
-
-		// START PANEL
-		GridLayout gl1 = new GridLayout(2, 1);
-		panStart.setLayout(gl1);
-		panStart.setPreferredSize(new Dimension(650, 50));
-		panStart.add(playBtn);
-		panStart.add(tips);
-		add(panStart, BorderLayout.NORTH);
-		setVisible(true);
-
 	}
 
 	ActionListener resumeAction = new ActionListener() {
