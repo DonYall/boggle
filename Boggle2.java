@@ -732,7 +732,7 @@ public class Boggle2 extends JFrame{
 		try {
 			Scanner inputDic = new Scanner(fileDictionary);
 			while (inputDic.hasNext()) {
-				String strNext = inputDic.next().toUpperCase();
+				String strNext = inputDic.next();
 				if (strNext.length() > 2) {
 					String strFirstLetter = strNext.substring(0, 1);
 					if (mapDic.get(strFirstLetter) != null) {
@@ -847,6 +847,7 @@ public class Boggle2 extends JFrame{
 		    				{
 		    					remove(panAIGuess); 
 		    					add(panGuess, BorderLayout.NORTH); 
+		    					panGuess.setVisible(true); 
 		    				}
 		    				
 		    				player =2;
@@ -860,6 +861,7 @@ public class Boggle2 extends JFrame{
 		    				if (playerAI){
 		    					remove(panGuess); 
 		    					add(panAIGuess, BorderLayout.NORTH); 
+		    					panAIGuess.setVisible(true); 
 								// Let ai guess work first
 								wordsAI = aiGuess();
 								changeColor(true);
