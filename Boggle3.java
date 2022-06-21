@@ -10,535 +10,533 @@ import javax.swing.*;
 //Added the customisation of difficulty  
 
 public class Boggle3 extends JFrame {
-    // declare  variables
-    Map<String, ArrayList<String>> mapDic = new HashMap<String, ArrayList<String>>();
-    boolean playerAI = false;
-    boolean allowPause = true;
-    int score1 = 0;
-    int score2 = 0;
-    int goal = 15;
-    Dice dice = new Dice();
-    char[][] map = dice.getDice();
-    JLabel[][] showMap = new JLabel[map.length][map[0].length];
-    int counter = 0;
-    ArrayList<String> wordsAI = new ArrayList<String>();
-    boolean player1;
-    int player = 1;
-    boolean played = false;
-    ArrayList<String> wordGuessedValid = new ArrayList<String>();
-    ArrayList<String> aiWordGuessedValid = new ArrayList<String>();
-    boolean paused;
-    public int[] row = { -1, -1, -1, 0, 1, 0, 1, 1 };
-    public int[] col = { -1, 1, 0, -1, -1, 1, 0, 1 };
-    public int intStartR = 0;
-    public int intStartC = 0;
-    public boolean pathFound;
-    public ArrayList<int[]> coordinates = new ArrayList<>();
-    public int difficulty;
-    public boolean inGame = false;
-    public boolean justStarted = true;
-    public Color color1 = Color.WHITE;
-    public Color color1f = Color.BLACK;
-    public Color color2 = Color.ORANGE;
-    public Color color2f = Color.BLACK;
+	// declare variables
+	Map<String, ArrayList<String>> mapDic = new HashMap<String, ArrayList<String>>();
+	boolean playerAI = false;
+	boolean allowPause = true;
+	int score1 = 0;
+	int score2 = 0;
+	int goal = 15;
+	Dice dice = new Dice();
+	char[][] map = dice.getDice();
+	JLabel[][] showMap = new JLabel[map.length][map[0].length];
+	int counter = 0;
+	ArrayList<String> wordsAI = new ArrayList<String>();
+	boolean player1;
+	int player = 1;
+	boolean played = false;
+	ArrayList<String> wordGuessedValid = new ArrayList<String>();
+	ArrayList<String> aiWordGuessedValid = new ArrayList<String>();
+	boolean paused;
+	public int[] row = { -1, -1, -1, 0, 1, 0, 1, 1 };
+	public int[] col = { -1, 1, 0, -1, -1, 1, 0, 1 };
+	public int intStartR = 0;
+	public int intStartC = 0;
+	public boolean pathFound;
+	public ArrayList<int[]> coordinates = new ArrayList<>();
+	public int difficulty;
+	public boolean inGame = false;
+	public boolean justStarted = true;
+	public Color color1 = Color.WHITE;
+	public Color color1f = Color.BLACK;
+	public Color color2 = Color.ORANGE;
+	public Color color2f = Color.BLACK;
 
+	private GameTimer t; // create the game timer (a count down timer)
 
-    private GameTimer t; // create the game timer (a count down timer)
+	// INSTRUCTION PANEL COMPONENTS
+	JPanel panInstruction = new JPanel();
+	JLabel instructionLabel0 = new JLabel("INSTRUCTION: ");
+	JLabel instructionLabel1 = new JLabel("Boggle overview");
+	JLabel instructionLabel2 = new JLabel("Boggle is a Hasbro word game that requires 16 letter cubes, ");
+	JLabel instructionLabel3 = new JLabel("the cube grid with dome, and a 3-minute sand timer, ");
+	JLabel instructionLabel4 = new JLabel("all of which should be included with your game. ");
+	JLabel instructionLabel5 = new JLabel("The game requires a minimum of two players with no maximum. ");
+	JLabel instructionLabel6 = new JLabel("It is recommended for ages 8 and up.");
+	JLabel instructionLabel7 = new JLabel("The goal of the game is have the highest point total. ");
+	JLabel instructionLabel8 = new JLabel(
+			"To gain points, players must create words from the randomly assorted letters in the cube grid. ");
+	JLabel instructionLabel9 = new JLabel(
+			"The longer the word, the higher the point value of the word, according to Boggle rules.");
+	JLabel instructionLabel10 = new JLabel("However, the word must have at least 3 characters. ");
+	JLabel instructionLabel11 = new JLabel(
+			"Noted that if you choose single player mode, you will always be the person who goes first. ");
+	JLabel instructionLabel12 = new JLabel(
+			"************************************************** The scoring rules:**************************************************");
+	JLabel instructionLabel13 = new JLabel(
+			"                  Word Length | 3  | 4  | 5  | 6  | 7  | 8 or more                  ");
+	JLabel instructionLabel14 = new JLabel("--------------------------------------------------");
+	JLabel instructionLabel15 = new JLabel(
+			"                  Score       | 1  | 1  | 2  | 3  | 5  | 11                         ");
 
-    // INSTRUCTION PANEL COMPONENTS
-    JPanel panInstruction = new JPanel();
-    JLabel instructionLabel0 = new JLabel("INSTRUCTION: ");
-    JLabel instructionLabel1 = new JLabel("Boggle overview");
-    JLabel instructionLabel2 = new JLabel("Boggle is a Hasbro word game that requires 16 letter cubes, ");
-    JLabel instructionLabel3 = new JLabel("the cube grid with dome, and a 3-minute sand timer, ");
-    JLabel instructionLabel4 = new JLabel("all of which should be included with your game. ");
-    JLabel instructionLabel5 = new JLabel("The game requires a minimum of two players with no maximum. ");
-    JLabel instructionLabel6 = new JLabel("It is recommended for ages 8 and up.");
-    JLabel instructionLabel7 = new JLabel("The goal of the game is have the highest point total. ");
-    JLabel instructionLabel8 = new JLabel(
-            "To gain points, players must create words from the randomly assorted letters in the cube grid. ");
-    JLabel instructionLabel9 = new JLabel(
-            "The longer the word, the higher the point value of the word, according to Boggle rules.");
-    JLabel instructionLabel10 = new JLabel("However, the word must have at least 3 characters. ");
-    JLabel instructionLabel11 = new JLabel("Noted that if you choose single player mode, you will always be the person who goes first. "); 
-	JLabel instructionLabel12 = new JLabel("************************************************** The scoring rules:**************************************************");
-	JLabel instructionLabel13 = new JLabel("                  Word Length | 3  | 4  | 5  | 6  | 7  | 8 or more                  "); 
-	JLabel instructionLabel14 = new JLabel("--------------------------------------------------"); 
-	JLabel instructionLabel15 = new JLabel("                  Score       | 1  | 1  | 2  | 3  | 5  | 11                         "); 
+	// GAME OVER PANEL COMPONENTS
+	JPanel panOver = new JPanel(new FlowLayout());
+	JLabel winnerLabel = new JLabel();
+	JButton closeBtn = new JButton("Quit application");
 
-    // GAME OVER PANEL
-    JPanel panOver = new JPanel(new FlowLayout());
-    JLabel winnerLabel = new JLabel();
-    JButton closeBtn = new JButton("Quit application");
+	// PAUSE PANEL COMPONENTS
+	JPanel panPause = new JPanel();
+	JLabel pauseLabel = new JLabel("Game paused");
+	JButton resumeBtn = new JButton("Resume");
 
-    // PAUSE PANEL
-    JPanel panPause = new JPanel();
-    JLabel pauseLabel = new JLabel("Game paused");
-    JButton resumeBtn = new JButton("Resume");
+	// PLAYING PANELS COMPONENTS
+	// declare components for playing panels
+	JPanel panGuess = new JPanel(new FlowLayout());
+	JPanel panBoggle = new JPanel(new GridLayout(map.length, map[0].length));
+	JPanel panAIGuess = new JPanel(new FlowLayout());
+	JPanel panScore = new JPanel(new FlowLayout());
+	JPanel panTimer = new JPanel(new FlowLayout());
+	JPanel panError = new JPanel(new FlowLayout());
+	JLabel guessLabel = new JLabel("What is your answer? ");
+	JTextField guessIn = new JTextField("Please enter your answer here", 20);
+	JButton guessBtn = new JButton("Enter");
+	JLabel computerLabel0 = new JLabel("The answer from computer is... ");
+	JLabel computerLabel1 = new JLabel("still thinking... ");
+	JLabel scoreLabel0 = new JLabel("Current score of player 1:");
+	JLabel scoreLabel1 = new JLabel("0");
+	JLabel scoreLabel2 = new JLabel("          Current score of player 2:");
+	JLabel scoreLabel3 = new JLabel("0");
+	JButton homeBtn = new JButton("Back to homepage");
+	JLabel timerLabel = new JLabel("Timer: 00:15");
+	JLabel errorLabel = new JLabel();
 
-    // PLAYING PANELS
-    // declare components for playing panels
-    JPanel panGuess = new JPanel(new FlowLayout());
-    JPanel panBoggle = new JPanel(new GridLayout(map.length, map[0].length));
-    JPanel panAIGuess = new JPanel(new FlowLayout());
-    JPanel panScore = new JPanel(new FlowLayout());
-    JPanel panTimer = new JPanel(new FlowLayout());
-    JPanel panError = new JPanel(new FlowLayout());
-    JLabel guessLabel = new JLabel("What is your answer? ");
-    JTextField guessIn = new JTextField("Please enter your answer here", 20);
-    JButton guessBtn = new JButton("Enter");
-    JLabel computerLabel0 = new JLabel("The answer from computer is... ");
-    JLabel computerLabel1 = new JLabel("still thinking... ");
-    JLabel scoreLabel0 = new JLabel("Current score of player 1:");
-    JLabel scoreLabel1 = new JLabel("0");
-    JLabel scoreLabel2 = new JLabel("          Current score of player 2:");
-    JLabel scoreLabel3 = new JLabel("0");
-    JButton homeBtn = new JButton("Back to homepage");
-    JLabel timerLabel = new JLabel("Timer: 00:15");
-    JLabel errorLabel = new JLabel();
+	// CUSTOMISATION PANEL COMPONENTS
+	JPanel panCustomisation = new JPanel(new GridLayout(9, 2));
 
-    // CUSTOMISATION PANEL
-    JPanel panCustomisation = new JPanel(new GridLayout(9, 2));
+	JLabel customisationLabel0 = new JLabel("CUSTOMISATION");
+	JLabel playersMode = new JLabel("Which mdoe would you like to choose? ");
+	JButton singlePlayerBtn = new JButton("Single Player");
+	JButton twoPlayerBtn = new JButton("Two Player");
+	JLabel difficultyLabel = new JLabel("Choose the difficulty for the bot. Please enter 1-5. ");
+	JTextField difficultyIn = new JTextField("Please enter 1-5");
+	JButton difficultyBtn = new JButton("Enter");
+	JLabel allowPauseLabel = new JLabel("Will this game allow pausing? ");
+	JButton yesBtn = new JButton("Yes");
+	JButton noBtn = new JButton("No");
+	JTextField ptIn = new JTextField("Enter points to play");
+	JLabel targetScore = new JLabel("Tournament score? Please enter an integer. ");
+	JButton ptBtn = new JButton("Enter");
 
-    JLabel customisationLabel0 = new JLabel("CUSTOMISATION");
-    JLabel playersMode = new JLabel("Which mdoe would you like to choose? ");
-    JButton singlePlayerBtn = new JButton("Single Player");
-    JButton twoPlayerBtn = new JButton("Two Player");
-    JLabel difficultyLabel = new JLabel("Choose the difficulty for the bot. Please enter 1-5. ");
-    JTextField difficultyIn = new JTextField("Please enter 1-5");
-    JButton difficultyBtn = new JButton("Enter");
-    JLabel allowPauseLabel = new JLabel("Will this game allow pausing? ");
-    JButton yesBtn = new JButton("Yes");
-    JButton noBtn = new JButton("No");
-    JTextField ptIn = new JTextField("Enter points to play");
-    JLabel targetScore = new JLabel("Tournament score? Please enter an integer. ");
-    JButton ptBtn = new JButton("Enter");
-    
-    // MENU BAR
-    JMenuBar menuBar = new JMenuBar();
-    // menu
-    JMenu menu = new JMenu("Menu"); // restart, shake up button, instruction, customisation
-    JMenu pauseMenu = new JMenu("Pause"); // pause, resume
-    JMenu theme = new JMenu("Theme"); // change theme
-    // menu menu items
-    JMenuItem instruction = new JMenuItem("Instruction");
-    JMenuItem restart = new JMenuItem("Home/ Restart");
-    JMenuItem shakeUp = new JMenuItem("Shake-up");
-    JMenuItem customisation = new JMenuItem("Customisation");
-    // pause menu item
-    JMenuItem pauseOp = new JMenuItem("Pause");
-    JMenuItem resume = new JMenuItem("Resume");
-    // theme menu items
-    JMenuItem thDefault = new JMenuItem("Default");
-    JMenuItem thDark = new JMenuItem("Dark");
-    JMenuItem thClassy = new JMenuItem("Classy");
-    JMenuItem thModern = new JMenuItem("Modern");
-    JMenuItem thGalaxy = new JMenuItem("Galaxy");
-    JMenuItem thCandy = new JMenuItem("Candy");
-    JMenuItem thSynthwave = new JMenuItem("Synthwave");
-    JMenuItem thNight = new JMenuItem("Night Owl");
-    JMenuItem thWood = new JMenuItem("Wooden");
+	// MENU BAR COMPONENTS
+	JMenuBar menuBar = new JMenuBar();
+	// menu
+	JMenu menu = new JMenu("Menu"); // restart, shake up button, instruction, customisation
+	JMenu pauseMenu = new JMenu("Pause"); // pause, resume
+	JMenu theme = new JMenu("Theme"); // change theme
+	// menu menu items
+	JMenuItem instruction = new JMenuItem("Instruction");
+	JMenuItem restart = new JMenuItem("Home/ Restart");
+	JMenuItem shakeUp = new JMenuItem("Shake-up");
+	JMenuItem customisation = new JMenuItem("Customisation");
+	// pause menu item
+	JMenuItem pauseOp = new JMenuItem("Pause");
+	JMenuItem resume = new JMenuItem("Resume");
+	// theme menu items
+	JMenuItem thDefault = new JMenuItem("Default");
+	JMenuItem thDark = new JMenuItem("Dark");
+	JMenuItem thClassy = new JMenuItem("Classy");
+	JMenuItem thModern = new JMenuItem("Modern");
+	JMenuItem thGalaxy = new JMenuItem("Galaxy");
+	JMenuItem thCandy = new JMenuItem("Candy");
+	JMenuItem thSynthwave = new JMenuItem("Synthwave");
+	JMenuItem thNight = new JMenuItem("Night Owl");
+	JMenuItem thWood = new JMenuItem("Wooden");
 
+	// HOME PAGE PANEL COMPONENTS
+	JPanel panStart = new JPanel();
+	JButton playBtn = new JButton("Play");
+	JLabel tips = new JLabel("Remember to check the menu for more features and intruction. ");
 
-    // HOME PAGE PANEL
-    JPanel panStart = new JPanel();
-    JButton playBtn = new JButton("Play");
-    JLabel tips = new JLabel("Remember to check the menu for more features and intruction. ");
+	public Boggle3() { // constructor
+		setTitle("boggle game");// set frame title
+		setSize(750, 680);// set frame size
+		setVisible(true);
 
-    public Boggle3() { // constructor
-        setTitle("boggle game");// set frame title
-        setSize(750, 680);// set frame size
-        setVisible(true);
-
-        // INSTRUCTION PANEL
-        panInstruction.add(instructionLabel0);
-        panInstruction.add(instructionLabel1);
-        panInstruction.add(instructionLabel2);
-        panInstruction.add(instructionLabel3);
-        panInstruction.add(instructionLabel4);
-        panInstruction.add(instructionLabel5);
-        panInstruction.add(instructionLabel6);
-        panInstruction.add(instructionLabel7);
-        panInstruction.add(instructionLabel8);
-        panInstruction.add(instructionLabel9);
-        panInstruction.add(instructionLabel10);
-        panInstruction.add(instructionLabel11);
+		// INSTRUCTION PANEL
+		panInstruction.add(instructionLabel0);
+		panInstruction.add(instructionLabel1);
+		panInstruction.add(instructionLabel2);
+		panInstruction.add(instructionLabel3);
+		panInstruction.add(instructionLabel4);
+		panInstruction.add(instructionLabel5);
+		panInstruction.add(instructionLabel6);
+		panInstruction.add(instructionLabel7);
+		panInstruction.add(instructionLabel8);
+		panInstruction.add(instructionLabel9);
+		panInstruction.add(instructionLabel10);
+		panInstruction.add(instructionLabel11);
 		panInstruction.add(instructionLabel12);
 		panInstruction.add(instructionLabel13);
 		panInstruction.add(instructionLabel14);
 		panInstruction.add(instructionLabel15);
 
-        // set visible of panInstruction to true
-        panInstruction.setVisible(false);
+		// set visible of panInstruction to true
+		panInstruction.setVisible(false);
 
-        // PAUSE PANEL
-        // add components to panPause
-        pauseLabel.setFont(new Font("Bradley Hand", Font.BOLD, 40)); // set font of the JLabel
-        panPause.add(pauseLabel);
-        panPause.add(resumeBtn);
-        // set visible to false
-        panPause.setVisible(false);
+		// PAUSE PANEL
+		// add components to panPause
+		pauseLabel.setFont(new Font("Bradley Hand", Font.BOLD, 40)); // set font of the JLabel
+		panPause.add(pauseLabel);
+		panPause.add(resumeBtn);
+		// set visible to false
+		panPause.setVisible(false);
 
-        // GAME OVER PANEL
-        panOver.add(winnerLabel, BorderLayout.NORTH);
-        panOver.add(homeBtn, BorderLayout.CENTER);
-        panOver.add(closeBtn, BorderLayout.SOUTH);
-        panOver.setVisible(false);
+		// GAME OVER PANEL
+		//add componenets to panOver 
+		panOver.add(winnerLabel, BorderLayout.NORTH); 
+		panOver.add(homeBtn, BorderLayout.CENTER);
+		panOver.add(closeBtn, BorderLayout.SOUTH);
+		// set visible to false
+		panOver.setVisible(false); 
 
-        // PLAY PANEL
-        panScore.setPreferredSize(new Dimension(3, 550));
-        panBoggle.setPreferredSize(new Dimension(600, 550));
+		// PLAY PANEL
+		//Including panGuess, panAIGuess, panScore, panBoggle
+		panScore.setPreferredSize(new Dimension(3, 550)); //set size 
+		panBoggle.setPreferredSize(new Dimension(600, 550));//set size 
 
-        initialisePanBoggle();
-        panGuess.add(guessLabel);
-        panGuess.add(guessIn);
-        panGuess.add(guessBtn);
-        panAIGuess.add(computerLabel0);
-        panAIGuess.add(computerLabel1);
-        panScore.add(scoreLabel0);
-        panScore.add(scoreLabel1);
-        panScore.add(scoreLabel2);
-        panScore.add(scoreLabel3);
-        panTimer.add(timerLabel);
-        panError.add(errorLabel);
+		initialisePanBoggle();//invoke sub method to create JLabels 
+		panGuess.add(guessLabel);
+		panGuess.add(guessIn);
+		panGuess.add(guessBtn);
+		panAIGuess.add(computerLabel0);
+		panAIGuess.add(computerLabel1);
+		panScore.add(scoreLabel0);
+		panScore.add(scoreLabel1);
+		panScore.add(scoreLabel2);
+		panScore.add(scoreLabel3);
+		panTimer.add(timerLabel);
+		panError.add(errorLabel);
+		// set visible to false
+		panScore.setVisible(false);
+		panBoggle.setVisible(false);
+		panGuess.setVisible(false);
+		panAIGuess.setVisible(false);
+		
+		//CUSTOMISATION PANEL 
+		panCustomisation.setPreferredSize(new Dimension(650, 550));//set size 
+		panCustomisation.add(customisationLabel0);
+		panCustomisation.add(new JLabel(""));
+		panCustomisation.add(playersMode);
+		panCustomisation.add(new JLabel(""));
+		panCustomisation.add(singlePlayerBtn);
+		panCustomisation.add(twoPlayerBtn);
 
-        panScore.setVisible(false);
-        panBoggle.setVisible(false);
-        panGuess.setVisible(false);
-        panAIGuess.setVisible(false);
+		panCustomisation.add(allowPauseLabel);
+		panCustomisation.add(new JLabel(""));
+		panCustomisation.add(yesBtn);
+		panCustomisation.add(noBtn);
+		panCustomisation.add(targetScore);
+		panCustomisation.add(new JLabel(""));
+		panCustomisation.add(ptIn);
+		panCustomisation.add(ptBtn);
+		panCustomisation.setVisible(false);
 
-        panCustomisation.setPreferredSize(new Dimension(650, 550));
-        panCustomisation.add(customisationLabel0);
-        panCustomisation.add(new JLabel(""));
-        panCustomisation.add(playersMode);
-        panCustomisation.add(new JLabel(""));
-        panCustomisation.add(singlePlayerBtn);
-        panCustomisation.add(twoPlayerBtn);
+		// MENU BAR
+		menuBar.add(menu);
+		menuBar.add(pauseMenu);
+		menuBar.add(theme);
+		setJMenuBar(menuBar);
+		// MENU - add menu items
+		menu.add(restart);
+		menu.add(instruction);
+		menu.add(customisation);
 
-        panCustomisation.add(allowPauseLabel);
-        panCustomisation.add(new JLabel(""));
-        panCustomisation.add(yesBtn);
-        panCustomisation.add(noBtn);
-        panCustomisation.add(targetScore);
-        panCustomisation.add(new JLabel(""));
-        panCustomisation.add(ptIn);
-        panCustomisation.add(ptBtn);
-        panCustomisation.setVisible(false);
+		// PAUSE -- add menu items
+		pauseMenu.add(pauseOp);
+		pauseMenu.add(resume);
 
-        // MENU BAR
-        menuBar.add(menu);
-        menuBar.add(pauseMenu);
-        menuBar.add(theme);
-        setJMenuBar(menuBar);
-        // MENU - add menu items
-        menu.add(restart);
-        menu.add(instruction);
-        menu.add(customisation);
+		// THEME -- add menu items
+		theme.add(thDefault);
+		theme.add(thDark);
+		theme.add(thClassy);
+		theme.add(thGalaxy);
+		theme.add(thCandy);
+		theme.add(thSynthwave);
+		theme.add(thNight);
+		theme.add(thWood);
 
-        // PAUSE -- add menu items
-        pauseMenu.add(pauseOp);
-        pauseMenu.add(resume);
+		// START PANEL
+		GridLayout gl1 = new GridLayout(2, 1);//create layout 
+		panStart.setLayout(gl1);
+		panStart.setPreferredSize(new Dimension(650, 50));
+		panStart.add(playBtn);
+		panStart.add(tips);
+		add(panStart, BorderLayout.NORTH); // add panStart to frame 
+		// set visible to false
+		setVisible(true);
 
-        // THEME -- add menu items
-        theme.add(thDefault);
-        theme.add(thDark);
-        theme.add(thClassy);
-        theme.add(thGalaxy);
-        theme.add(thCandy);
-        theme.add(thSynthwave);
-        theme.add(thNight);
-        theme.add(thWood);
+		//set default close operation for JFrame
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // START PANEL
-        GridLayout gl1 = new GridLayout(2, 1);
-        panStart.setLayout(gl1);
-        panStart.setPreferredSize(new Dimension(650, 50));
-        panStart.add(playBtn);
-        panStart.add(tips);
-        add(panStart, BorderLayout.NORTH);
-        setVisible(true);
+		t = new GameTimer();//create GameTimer 
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		closeBtn.addActionListener(e -> { //create action listener for closeBtn 
+			dispose(); // when button is being pressed, it will close the frame 
+		});
 
-        t = new GameTimer();
+		ptBtn.addActionListener(new ActionListener() {//create action listener for ptBtn
+			public void actionPerformed(ActionEvent e) { 
+				goal = Integer.parseInt(ptIn.getText());
+				System.out.println("ptBtnPressed pressed, goal stored");
+			}
 
-        closeBtn.addActionListener(e -> {
-            dispose();
-        });
+		});
 
-        ptBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                goal = Integer.parseInt(ptIn.getText());
-                System.out.println("ptBtnPressed pressed, goal stored");
-            }
+		singlePlayerBtn.addActionListener(new ActionListener() {//create action listener for singlePlayerBtn
+			public void actionPerformed(ActionEvent e) {
+				playerAI = true;
 
-        });
+				if (!difficultyLabel.isShowing()) { // if difficultyLabel is not showing on gui 
+					//add components for customising bot difficulty to panCustomisation 
+					panCustomisation.add(difficultyLabel);
+					panCustomisation.add(new JLabel(""));
+					panCustomisation.add(difficultyIn);
+					panCustomisation.add(difficultyBtn);
+					panCustomisation.repaint();//repaint panCustomisation 
+					repaint();//repaint the frame 
+					revalidate();//revalidate the frame 
+				}
 
-        singlePlayerBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                playerAI = true;
-                System.out.println("singlePlayerBtn pressed,  playerAI to true");
-                
-                if (!difficultyLabel.isShowing())
-                {
-                    panCustomisation.add(difficultyLabel);
-                    panCustomisation.add(new JLabel(""));
-                    panCustomisation.add(difficultyIn);
-                    panCustomisation.add(difficultyBtn);
-                    panCustomisation.repaint(); 
-					repaint(); 
-                    revalidate();
-                }
-                
-            }
-        });
+			}
+		});
 
-        twoPlayerBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                playerAI = false;
-                System.out.println("twoPlayerBtn pressed, playerAI to false");
-                if (difficultyLabel.isShowing())
-                {
-                    panCustomisation.remove(difficultyLabel);
-                    panCustomisation.remove(difficultyIn);
-                    panCustomisation.remove(difficultyBtn);
-                }
-            }
+		twoPlayerBtn.addActionListener(new ActionListener() {//create action listener for twoPlayerBtn
+			public void actionPerformed(ActionEvent e) {
+				playerAI = false; //set playerAI to false 
+				if (difficultyLabel.isShowing()) { //if difficultyLabel is showing on the gui 
+					//remove components for customising bot difficulty from panCustomisation 
+					panCustomisation.remove(difficultyLabel);
+					panCustomisation.remove(difficultyIn);
+					panCustomisation.remove(difficultyBtn);
+				}
+			}
 
-        });
+		});
 
-        
-            difficultyBtn.addActionListener(new ActionListener() { 
-            public void actionPerformed(ActionEvent e) {
-                difficulty = Integer.parseInt(difficultyIn.getText()); 
-            }
-                
-            });
-            
+		difficultyBtn.addActionListener(new ActionListener() {//create action listener for difficultyBtn
+			public void actionPerformed(ActionEvent e) {
+				difficulty = Integer.parseInt(difficultyIn.getText()); // store bot difficulty to difficulty 
+			}
 
-        yesBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (!allowPause) {
-                    pauseMenu.add(pauseOp);
-                }
-                allowPause = true;
-            }
-        });
+		});
 
-        noBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                allowPause = false;
-                pauseMenu.remove(pauseOp);
-            }
+		yesBtn.addActionListener(new ActionListener() {//create action listener for yesBtn
+			public void actionPerformed(ActionEvent e) {
+				if (!allowPause) { //if previous option was don't allow Pause 
+					pauseMenu.add(pauseOp);//add the menu item pauseOp back 
+				}
+				allowPause = true;//set allowPause to true 
+			}
+		});
 
-        });
+		noBtn.addActionListener(new ActionListener() {//create action listener for noBtn
+			public void actionPerformed(ActionEvent e) {
+				if (allowPause) { //if previous option was don't allow Pause 
+					pauseMenu.remove(pauseOp);//remove the menu item pauseOp  
+				}allowPause = false;//set allowPause to false 
+				
+			}
 
-        instruction.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("instruction invoked");
+		});
 
-                getContentPane().removeAll();
-                repaint();
-                revalidate();
+		instruction.addActionListener(new ActionListener() {//create action listener for instruction
+			public void actionPerformed(ActionEvent e) {
+				//remove all the components on frame, and then repaint and revalidate the frame 
+				getContentPane().removeAll();
+				repaint();
+				revalidate();
+				
+				add(panInstruction); //add panInstruction to frame 
+				panInstruction.setVisible(true);//set visile to true 
+				validate();//validate frame 
+			}
 
-                add(panInstruction);
-                panInstruction.setVisible(true);
-                validate();
-            }
+		});
 
-        });
+		restart.addActionListener(restartAction);//create action listener for singlePlayerBtn
 
-        restart.addActionListener(restartAction);
+		homeBtn.addActionListener(new ActionListener() {//create action listener for homeBtn
+			public void actionPerformed(ActionEvent e) {
+				dispose();//close the current frame 
+				new Boggle3();//create a new frame 
+			}
+		});
 
-        homeBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("homeBtn pressed");
-                dispose();
-                new Boggle3();
-            }
-        });
+		shakeUp.addActionListener(new ActionListener() {//create action listener for shakeUp
+			public void actionPerformed(ActionEvent e) {
+				changeColor(coordinates, false);//change cells back to primary color 
+				randomizeBoggle();//invoke sub method in order to shakeUp the board 
+			}
 
-        shakeUp.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("shakeUp invoked");
+		});
 
-                changeColor(coordinates, false);
-                randomizeBoggle();
-            }
+		customisation.addActionListener(new ActionListener() {//create action listener for customisation
+			public void actionPerformed(ActionEvent e) {
+				t.pause(); // pause the timer 
+				//remove all the components on frame, and then repaint and revalidate the frame 
+				getContentPane().removeAll();
+				repaint();
+				revalidate();
 
-        });
+				add(panCustomisation);//add panCustomisation to frame 
+				panCustomisation.setVisible(true); // set visible to true 
+				validate();//validate the frame 
+			}
 
-        customisation.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("customisation invoked");
-                t.pause(); 
-                getContentPane().removeAll();
-                repaint();
-                revalidate();
+		});
 
-                add(panCustomisation);
-                panCustomisation.setVisible(true);
-                validate();
-            }
+		pauseOp.addActionListener(new ActionListener() {//create action listener for pauseOp
+			public void actionPerformed(ActionEvent e) {
+				//remove all the components on frame, and then repaint and revalidate the frame 
+				getContentPane().removeAll();
+				repaint();
+				revalidate();
 
-        });
+				paused = true; //set paused to true 
+				t.pause();//pause the timer
+				add(panPause);//add panPause to frame 
+				panPause.setVisible(true);//set panPause to true 
+			}
 
-        pauseOp.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("pauseOp invoked");
-                getContentPane().removeAll();
-                repaint();
-                revalidate();
+		});
 
-                paused = true;
-                t.pause();
-                add(panPause);
-                panPause.setVisible(true);
-            }
+		thDefault.addActionListener(new ActionListener() {//create action listener for thDefault
+			public void actionPerformed(ActionEvent e) {
+				
+				color1 = Color.WHITE; //set primary background colour as white 
+				color1f = Color.BLACK; //set primary foreground colour as black 
+				color2 = Color.ORANGE; //set secondary background colour as orange 
+				color2f = Color.BLACK; //set secondary foreground colour as black 
+				changeGridColor(); //invoke sub method to change grid colour 
+				panGuess.setBackground(color2); //set background of panGuess as secondary background colour 
+				guessLabel.setForeground(color2f); //set foreground of guessLabel as secondary foreground colour 
+			}
+		});
 
-        });
+		thDark.addActionListener(new ActionListener() {//create action listener for thDark
+			public void actionPerformed(ActionEvent e) {
+				color1 = Color.BLACK;//set primary background colour as black 
+				color1f = Color.WHITE;//set primary foreground colour as white 
+				color2 = Color.GRAY;//set secondary background colour as gray 
+				color2f = Color.BLACK;//set secondary foreground colour as black 
+				changeGridColor();//invoke sub method to change grid colour 
+				panGuess.setBackground(color2);//set background of panGuess as secondary background colour 
+				guessLabel.setForeground(color2f);//set foreground of guessLabel as secondary foreground colour 
+			}
+		});
 
-        thDefault.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("thDefault invoked");
-                color1 = Color.WHITE;
-                color1f = Color.BLACK;
-                color2 = Color.ORANGE;
-                color2f = Color.BLACK;
-                changeGridColor();
-                panGuess.setBackground(color2);
-                guessLabel.setForeground(color2f);
-            }
-        });
-    
-        thDark.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("thDark invoked");
-                color1 = Color.BLACK;
-                color1f = Color.WHITE;
-                color2 = Color.GRAY;
-                color2f = Color.BLACK;
-                changeGridColor();
-                panGuess.setBackground(color2);
-                guessLabel.setForeground(color2f);
-            }
-        });
-    
-        thClassy.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("thClassy invoked");
-                color1 = Color.WHITE;
-                color1f = Color.BLACK;
-                color2 = Color.BLACK;
-                color2f = Color.WHITE;
-                changeGridColor();
-                panGuess.setBackground(color2);
-                guessLabel.setForeground(color2f);
-            }
-        });
-    
-        thGalaxy.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("thGalaxy invoked");
-                color1 = new Color(0, 102, 102);
-                color1f = Color.BLACK;
-                color2 = new Color(204, 255, 255);
-                color2f = Color.BLACK;
-                changeGridColor();
-                panGuess.setBackground(color2);
-                guessLabel.setForeground(color2f);
-            }
-        });
-    
-        thCandy.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("thCandy invoked");
-                color1 = Color.PINK;
-                color1f = Color.BLACK;
-                color2 = new Color(194, 194, 214);
-                color2f = Color.BLACK;
-                changeGridColor();
-                panGuess.setBackground(color2);
-                guessLabel.setForeground(color2f);
-            }
-        });
+		thClassy.addActionListener(new ActionListener() {//create action listener for thClassy
+			public void actionPerformed(ActionEvent e) {
+				color1 = Color.WHITE;//set primary background colour as black 
+				color1f = Color.BLACK;//set primary foreground colour as white 
+				color2 = Color.BLACK;//set secondary background colour as BLACK 
+				color2f = Color.WHITE;//set secondary foreground colour as WHITE
+				changeGridColor();//invoke sub method to change grid colour 
+				panGuess.setBackground(color2);//set background of panGuess as secondary background colour 
+				guessLabel.setForeground(color2f);/set foreground of guessLabel as secondary foreground colour 
+			}
+		});
 
-        thSynthwave.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("thSynthwave invoked");
-                color1 = new Color(102, 0, 102);
-                color1f = Color.WHITE;
-                color2 = new Color(0, 255, 255);
-                color2f = Color.BLACK;
-                changeGridColor();
-                panGuess.setBackground(color2);
-                guessLabel.setForeground(color2f);
-            }
-        });
+		thGalaxy.addActionListener(new ActionListener() {//create action listener for thGalaxy
+			public void actionPerformed(ActionEvent e) {
+				color1 = new Color(0, 102, 102);//set primary background colour as Color(0, 102, 102) 
+				color1f = Color.BLACK;//set primary foreground colour as white 
+				color2 = new Color(204, 255, 255);//set secondary background colour as  Color(204, 255, 255) 
+				color2f = Color.BLACK;//set secondary foreground colour as black
+				changeGridColor();//invoke sub method to change grid colour 
+				panGuess.setBackground(color2);//set background of panGuess as secondary background colour 
+				guessLabel.setForeground(color2f);//set foreground of guessLabel as secondary foreground colour 
+			}
+		});
 
-        thNight.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("thNight invoked");
-                color1 = new Color(0, 0, 51);
-                color1f = Color.WHITE;
-                color2 = new Color(102, 102, 255);
-                color2f = Color.WHITE;
-                changeGridColor();
-                panGuess.setBackground(color2);
-                guessLabel.setForeground(color2f);
-            }
-        });
+		thCandy.addActionListener(new ActionListener() {//create action listener for thCandy
+			public void actionPerformed(ActionEvent e) {
+				color1 = Color.PINK;//set primary background colour as PINK 
+				color1f = Color.BLACK;//set primary foreground colour as white 
+				color2 = new Color(194, 194, 214);//set secondary background colour as Color(194, 194, 214) 
+				color2f = Color.BLACK;//set secondary foreground colour as black
+				changeGridColor();//invoke sub method to change grid colour 
+				panGuess.setBackground(color2);//set background of panGuess as secondary background colour 
+				guessLabel.setForeground(color2f);//set foreground of guessLabel as secondary foreground colour 
+			}
+		});
 
-        thWood.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("thWood invoked");
-                color1 = new Color(236, 217, 198);
-                color1f = Color.BLACK;
-                color2 = new Color(19, 13, 6);
-                color2f = Color.WHITE;
-                changeGridColor();
-                panGuess.setBackground(color2);
-                guessLabel.setForeground(color2f);
-            }
-        });
+		thSynthwave.addActionListener(new ActionListener() {//create action listener for thSynthwave
+			public void actionPerformed(ActionEvent e) {
+				color1 = new Color(102, 0, 102);//set primary background colour as Color(102, 0, 102) 
+				color1f = Color.WHITE;//set primary foreground colour as white 
+				color2 = new Color(0, 255, 255);//set secondary background colour as Color(0, 255, 255) 
+				color2f = Color.BLACK;//set secondary foreground colour as black
+				changeGridColor();//invoke sub method to change grid colour 
+				panGuess.setBackground(color2);//set background of panGuess as secondary background colour
+				guessLabel.setForeground(color2f);//set foreground of guessLabel as secondary foreground colour 
+			}
+		});
 
+		thNight.addActionListener(new ActionListener() {//create action listener for thNight
+			public void actionPerformed(ActionEvent e) {
+				color1 = new Color(0, 0, 51);//set primary background colour as black 
+				color1f = Color.WHITE;//set primary foreground colour as white 
+				color2 = new Color(102, 102, 255);//set secondary background colour as gray 
+				color2f = Color.WHITE;//set secondary foreground colour as WHITE
+				changeGridColor();//invoke sub method to change grid colour 
+				panGuess.setBackground(color2);//set background of panGuess as secondary background colour 
+				guessLabel.setForeground(color2f);;//set foreground of guessLabel as secondary foreground colour 
+			}
+		});
 
-        resume.addActionListener(resumeAction);
+		thWood.addActionListener(new ActionListener() {//create action listener for thWood
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("thWood invoked");
+				color1 = new Color(236, 217, 198);//set primary background colour as black 
+				color1f = Color.BLACK;//set primary foreground colour as white 
+				color2 = new Color(19, 13, 6);//set secondary background colour as gray 
+				color2f = Color.WHITE;//set secondary foreground colour as WHITE
+				changeGridColor();//invoke sub method to change grid colour 
+				panGuess.setBackground(color2);//set background of panGuess as secondary background colour 
+				guessLabel.setForeground(color2f);;//set foreground of guessLabel as secondary foreground colour 
+			}
+		});
 
-        resumeBtn.addActionListener(resumeAction);
+		resume.addActionListener(resumeAction); //set action listener for resume 
 
-        playBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {        
-                // Put dictionary into Map
-                File fileDictionary = new File("dictionary.txt");
-                try {
-                    Scanner inputDic = new Scanner(fileDictionary);
-                    while (inputDic.hasNext()) {
-                        String strNext = inputDic.next();
-                        if (strNext.length() > 2) {
-                            String strFirstLetter = strNext.substring(0, 1);
-                            if (mapDic.get(strFirstLetter) != null) {
-                                mapDic.get(strFirstLetter).add(strNext);
-                            } else {
-                                ArrayList<String> arrTemp = new ArrayList<String>();
-                                arrTemp.add(strNext);
-                                mapDic.put(strFirstLetter, arrTemp);
-                            }
-                        }
-                    }
-                    inputDic.close();
-                } catch (FileNotFoundException ee) {
-                    ee.printStackTrace();
-                }
-                inGame = true;
-                System.out.println("playPressed");
-                try {
-					t.setTime();
-				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) {
+		resumeBtn.addActionListener(resumeAction); // set actin listener for resumeBtn
+
+		playBtn.addActionListener(new ActionListener() {//create action listener for playBtn
+			public void actionPerformed(ActionEvent e) {
+				// Put dictionary into Map
+				File fileDictionary = new File("dictionary.txt");//create File fileDictionary 
+				try {
+					Scanner inputDic = new Scanner(fileDictionary);//create scanner object that will read fileDictionary 
+					while (inputDic.hasNext()) {//if the file still have next line 
+						String strNext = inputDic.next(); //read and store next string 
+						if (strNext.length() > 2) { //if the word length is greater than 2 
+							String strFirstLetter = strNext.substring(0, 1); // get the first character by using substring, and stor eit in strFirstLetter 
+							
+							if (mapDic.get(strFirstLetter) != null) { //if the strFirstLetter is in the hashmap 
+								mapDic.get(strFirstLetter).add(strNext); //store the word in the corresponding node 
+							} else { // or else 
+								ArrayList<String> arrTemp = new ArrayList<String>(); //create a temporary ArrayList<String 
+								arrTemp.add(strNext);////add the word into the temporary ArrayList
+								mapDic.put(strFirstLetter, arrTemp); // add the node, first character, and then store the word in corresponding nodes 
+							}
+						}
+					}
+					inputDic.close();//close scanner 
+				} catch (FileNotFoundException ee) { //catch exception 
+					ee.printStackTrace();
+				}
+				inGame = true; //set inGame to true 
+				try {
+					t.setTime(); //invoke sub method 
+				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) { //catch excpetion 
 					e1.printStackTrace();
 				}
-                t.reset(); 
-                played = true;
+				t.reset();//invoke sub method  
+				played = true; //set player as true 
+
+				menu.remove(customisation);
+				menu.remove(instruction);
 
                 menu.remove(customisation);
                 menu.remove(instruction);
