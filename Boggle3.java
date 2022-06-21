@@ -504,39 +504,35 @@ public class Boggle3 extends JFrame {
 
 		playBtn.addActionListener(new ActionListener() {//create action listener for playBtn
 			public void actionPerformed(ActionEvent e) {
-				// Put dictionary into Map
-				File fileDictionary = new File("dictionary.txt");//create File fileDictionary 
-				try {
-					Scanner inputDic = new Scanner(fileDictionary);//create scanner object that will read fileDictionary 
-					while (inputDic.hasNext()) {//if the file still have next line 
-						String strNext = inputDic.next(); //read and store next string 
-						if (strNext.length() > 2) { //if the word length is greater than 2 
-							String strFirstLetter = strNext.substring(0, 1); // get the first character by using substring, and stor eit in strFirstLetter 
-							
-							if (mapDic.get(strFirstLetter) != null) { //if the strFirstLetter is in the hashmap 
-								mapDic.get(strFirstLetter).add(strNext); //store the word in the corresponding node 
-							} else { // or else 
-								ArrayList<String> arrTemp = new ArrayList<String>(); //create a temporary ArrayList<String 
-								arrTemp.add(strNext);////add the word into the temporary ArrayList
-								mapDic.put(strFirstLetter, arrTemp); // add the node, first character, and then store the word in corresponding nodes 
-							}
+			// Put dictionary into Map
+			File fileDictionary = new File("dictionary.txt");//create File fileDictionary 
+			try {
+				Scanner inputDic = new Scanner(fileDictionary);//create scanner object that will read fileDictionary 
+				while (inputDic.hasNext()) {//if the file still have next line 
+					String strNext = inputDic.next(); //read and store next string 
+					if (strNext.length() > 2) { //if the word length is greater than 2 						String strFirstLetter = strNext.substring(0, 1); // get the first character by using substring, and stor eit in strFirstLetter 
+					
+						if (mapDic.get(strFirstLetter) != null) { //if the strFirstLetter is in the hashmap 
+							mapDic.get(strFirstLetter).add(strNext); //store the word in the corresponding node 
+						} else { // or else 
+							ArrayList<String> arrTemp = new ArrayList<String>(); //create a temporary ArrayList<String 
+							arrTemp.add(strNext);////add the word into the temporary ArrayList
+							mapDic.put(strFirstLetter, arrTemp); // add the node, first character, and then store the word in corresponding nodes 
 						}
 					}
-					inputDic.close();//close scanner 
-				} catch (FileNotFoundException ee) { //catch exception 
-					ee.printStackTrace();
 				}
-				inGame = true; //set inGame to true 
-				try {
-					t.setTime(); //invoke sub method 
-				} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) { //catch excpetion 
-					e1.printStackTrace();
-				}
-				t.reset();//invoke sub method  
-				played = true; //set player as true 
-
-				menu.remove(customisation);
-				menu.remove(instruction);
+				inputDic.close();//close scanner 
+		} catch (FileNotFoundException ee) { //catch exception 
+			ee.printStackTrace();
+		}
+		inGame = true; //set inGame to true 
+		try {
+			t.setTime(); //invoke sub method 
+		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e1) { //catch excpetion 
+			e1.printStackTrace();
+		}
+		t.reset();//invoke sub method  
+		played = true; //set player as true 
 
                 menu.remove(customisation);
                 menu.remove(instruction);
